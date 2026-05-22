@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand Colors */
+  --bmz-yellow-50:  #fffbeb;
+  --bmz-yellow-100: #fef3c7;
+  --bmz-yellow-300: #fcd34d;
+  --bmz-yellow-400: #facc15;
+  --bmz-yellow-500: #eab308;
+  --bmz-yellow-900: #713f12;
+ 
+  --bmz-purple-400: #c084fc;
+  --bmz-purple-500: #a855f7;
+  --bmz-purple-600: #9333ea;
+  --bmz-purple-700: #7e22ce;
+  --bmz-purple-900: #3b0764;
+ 
+  --bmz-blue-400:   #60a5fa;
+  --bmz-blue-500:   #3b82f6;
+  --bmz-blue-600:   #2563eb;
+  --bmz-blue-700:   #1d4ed8;
+ 
+  /* Semantic */
+  --bmz-success:    #22c55e;
+  --bmz-danger:     #ef4444;
+  --bmz-warning:    #f97316;
+  --bmz-info:       var(--bmz-blue-500);
+ 
+  /* Surface */
+  --bmz-bg:         #0b0614;
+  --bmz-surface-1:  rgba(255,255,255,0.06);
+  --bmz-surface-2:  rgba(255,255,255,0.10);
+  --bmz-border:     rgba(255,255,255,0.10);
+  --bmz-border-hover: rgba(255,255,255,0.20);
+ 
+  /* Text */
+  --bmz-text-primary:   #ffffff;
+  --bmz-text-secondary: #9ca3af;
+  --bmz-text-muted:     #4b5563;
+ 
+  /* Radius */
+  --bmz-radius-sm:  8px;
+  --bmz-radius-md:  12px;
+  --bmz-radius-lg:  16px;
+  --bmz-radius-xl:  24px;
+  --bmz-radius-full: 9999px;
+ 
+  /* Shadows */
+  --bmz-shadow-yellow: 0 8px 32px rgba(250,204,21,0.25);
+  --bmz-shadow-purple: 0 8px 32px rgba(147,51,234,0.30);
+  --bmz-shadow-blue:   0 8px 32px rgba(59,130,246,0.25);
+ 
+  /* Transitions */
+  --bmz-transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+ 
+/* Global base */
+*, *::before, *::after { box-sizing: border-box; }
+ 
+body {
+  background: var(--bmz-bg);
+  color: var(--bmz-text-primary);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+ 
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bmz-surface-2); border-radius: 99px; }
+ 
