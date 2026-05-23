@@ -13,7 +13,7 @@ function App() {
     <>
       <Routes>
         {/* Public Routes */}
-        <Route path="/home" element={<HomePage />} />
+        <Route path="/" element={<HomePage />} />
 
         {/* Auth Routes - Redirect if already logged in */}
         <Route
@@ -35,7 +35,7 @@ function App() {
 
         {/* Protected Routes - Require Admin Role */}
         <Route path="/admin/dashboard" element={<Dashboard />} />
-        <Route path="/" element={<IMEIScanner />} />
+        <Route path="/admin/imei-scanner" element={<IMEIScanner />} />
 
         {/* 404 - Catch all */}
         <Route path="*" element={<Navigate to="/" replace />} />

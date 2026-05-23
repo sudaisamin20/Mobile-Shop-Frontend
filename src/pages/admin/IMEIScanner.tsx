@@ -318,7 +318,7 @@ const IMEIScanner = () => {
     };
 
     setScanResult(imei);
-    setHistory((prev) => [entry, ...prev]);
+    // Don't add to history directly - show modal for confirmation
     setDetailItem(entry);
 
     addToast({
@@ -327,6 +327,19 @@ const IMEIScanner = () => {
         : `⚠️ Scanned: ${imei} (invalid checksum)`,
       type: valid ? "success" : "warning",
     });
+  };
+
+  // ── Add to history after confirmation ────
+
+  const handleAddToHistory = () => {
+    if (detailItem) {
+      setHistory((prev) => [detailItem, ...prev]);
+      addToast({
+        message: `✅ IMEI added to history`,
+        type: "success",
+      });
+      setDetailItem(null);
+    }
   };
 
   // ── Start scanner ─────────────────────────
@@ -921,15 +934,19 @@ const IMEIScanner = () => {
                 Close
               </Button>
               <Button
-                variant="primary"
+                variant="secondary"
                 size="sm"
                 iconLeft={<ClipboardCopy size={13} />}
-                onClick={() => {
-                  copyToClipboard(detailItem.imei);
-                  setDetailItem(null);
-                }}
+                onClick={() => copyToClipboard(detailItem.imei)}
               >
-                Copy IMEI
+                Copy
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleAddToHistory}
+              >
+                Add to History
               </Button>
             </Modal.Footer>
           </div>
