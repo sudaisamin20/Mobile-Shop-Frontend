@@ -28,9 +28,6 @@ export { Section, SectionHeader, AnimateIn }   from "./Section";
 
 export { Modal }                               from "./Modal";
 
-export { Sidebar, MobileSidebarOverlay }       from "./Sidebar";
-export type { NavItem, SidebarUser }           from "./Sidebar";
-
 export { Table }                               from "./Table";
 
 export {

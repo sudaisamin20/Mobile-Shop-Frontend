@@ -3,6 +3,8 @@ import { Navbar } from "../components/ui/index";
 import { NAV_LINKS } from "../helpers/NavbarLinksHelper";
 import Footer from "../components/ui/Footer";
 import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { useAppSelector } from "../app/index";
 
 interface ILayoutProps {
   children: ReactNode;
@@ -10,10 +12,13 @@ interface ILayoutProps {
   description?: string;
   keyword?: string;
   author?: string;
+  navbar: true;
+  footer: true;
 }
 
 const Layout = (props: ILayoutProps) => {
-  const { children, title, description, keyword, author } = props;
+  const { children, title, description, keyword, author, navbar, footer } = props;
+  const state = useAppSelector((state) => state.auth);
   return (
     <div>
       <Helmet>
@@ -23,21 +28,24 @@ const Layout = (props: ILayoutProps) => {
         <meta charSet="author" content={author} />
         <title>{title}</title>
       </Helmet>
-      <Navbar
-        links={NAV_LINKS}
-        ctaLabel="Visit Store"
-        ctaHref="#contact"
-        rightExtra={
-          <a
-            href="/login"
-            className="text-sm text-gray-400 hover:text-white transition-colors px-4 py-2"
-          >
-            Login
-          </a>
-        }
-      />
+      {navbar && (
+        <Navbar
+          links={NAV_LINKS}
+          ctaLabel="Visit Store"
+          ctaHref="#contact"
+          rightExtra={
+            state.isAuthenticated ? null :
+            <Link
+              to="/login"
+              className="text-sm text-gray-400 hover:text-white transition-colors px-4 py-2"
+            >
+              Login
+            </Link>
+          }
+        />
+      )}
       <main>{children}</main>
-      <Footer />
+      {footer && <Footer />}
     </div>
   );
 };
@@ -47,6 +55,8 @@ Layout.defaultProps = {
   description: "This is web application where Basit Mobile Zone provided all kinds of mobiles and accessories.",
   keyword: "Basit Mobile Zone",
   author: "Basit Khan",
+  navbar: true,
+  footer: true,
 };
 
 export default Layout;

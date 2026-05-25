@@ -38,8 +38,8 @@ import { Table } from "../../components/ui/Table";
 import { Modal } from "../../components/ui/Modal";
 import { Input, Select, Textarea } from "../../components/ui/Input";
 import { AnimateIn } from "../../components/ui/Section";
-import { Sidebar, MobileSidebarOverlay } from "../../components/ui/Sidebar";
-import type { NavItem } from "../../components/ui/Sidebar";
+import type { NavItem } from "../../components/sidebar/Sidebar";
+import { Layout } from "../../layout";
 
 // ── Nav definition ────────────────────────────
 
@@ -301,100 +301,11 @@ const Dashboard = () => {
 
   return (
     <PageBackground>
+      <Layout title="Dashboard - Basit Mobile Zone">
+
       <div className="flex h-screen overflow-hidden">
-        {/* ── Desktop Sidebar ── */}
-        <div className="hidden md:block h-full flex-shrink-0">
-          <Sidebar
-            navItems={NAV_ITEMS}
-            activeKey={activeNav}
-            onNav={setActiveNav}
-            collapsed={collapsed}
-            onToggleCollapse={() => setCollapsed((c) => !c)}
-            user={{ name: "Basit Khan", role: "Super Admin" }}
-            onLogout={() =>
-              addToast({ message: "Logged out successfully", type: "info" })
-            }
-          />
-        </div>
-
-        {/* ── Mobile Sidebar ── */}
-        <MobileSidebarOverlay
-          open={mobileOpen}
-          onClose={() => setMobileOpen(false)}
-        >
-          <Sidebar
-            navItems={NAV_ITEMS}
-            activeKey={activeNav}
-            onNav={(k) => {
-              setActiveNav(k);
-              setMobileOpen(false);
-            }}
-            user={{ name: "Basit Khan", role: "Super Admin" }}
-            onLogout={() => addToast({ message: "Logged out", type: "info" })}
-          />
-        </MobileSidebarOverlay>
-
         {/* ── Main Area ── */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-          {/* Top Bar */}
-          <header className="flex items-center justify-between px-4 sm:px-6 h-16 border-b border-white/8 bg-[#0b0614]/60 backdrop-blur-xl flex-shrink-0 gap-3">
-            <div className="flex items-center gap-3">
-              {/* Mobile menu button */}
-              <button
-                onClick={() => setMobileOpen(true)}
-                aria-label="Open menu"
-                className="md:hidden w-9 h-9 flex items-center justify-center rounded-xl text-gray-400 hover:text-white hover:bg-white/8 border border-white/8 transition-all duration-200 cursor-pointer"
-              >
-                <Menu size={18} />
-              </button>
-
-              {/* Desktop collapse toggle */}
-              <button
-                onClick={() => setCollapsed((c) => !c)}
-                aria-label="Toggle sidebar"
-                className="hidden md:flex w-9 h-9 items-center justify-center rounded-xl text-gray-400 hover:text-white hover:bg-white/8 border border-white/8 transition-all duration-200 cursor-pointer"
-              >
-                {collapsed ? (
-                  <ChevronRight size={16} />
-                ) : (
-                  <ChevronLeft size={16} />
-                )}
-              </button>
-
-              <div>
-                <h1 className="text-white font-black text-base leading-tight">
-                  {navLabel}
-                </h1>
-                <p className="text-gray-500 text-[11px]">
-                  Thursday, 21 May 2026
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Search */}
-              <label className="hidden sm:flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 w-44 lg:w-60 focus-within:border-purple-500/50 transition-colors cursor-text">
-                <Search size={14} className="text-gray-500 flex-shrink-0" />
-                <input
-                  placeholder="Search..."
-                  className="bg-transparent outline-none text-white placeholder-gray-600 w-full text-sm"
-                />
-              </label>
-
-              {/* Notifications */}
-              <button
-                aria-label="Notifications"
-                className="relative w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200 cursor-pointer"
-              >
-                <Bell size={16} />
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full text-[9px] font-black text-yellow-900 flex items-center justify-center">
-                  3
-                </span>
-              </button>
-
-              <Avatar name="Basit Khan" size="sm" status="online" />
-            </div>
-          </header>
 
           {/* ── Scrollable body ── */}
           <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6">
@@ -767,6 +678,7 @@ const Dashboard = () => {
 
       {/* Toast notifications */}
       <ToastContainer toasts={toasts} />
+      </Layout>
     </PageBackground>
   );
 };

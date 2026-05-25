@@ -1,9 +1,21 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import { HomePage } from "./pages/home";
 import { LoginPage, SignupPage } from "./pages/auth";
-import { Dashboard, IMEIScanner } from "./pages/admin";
+import {
+  CustomersPage,
+  Dashboard,
+  IMEIScanner,
+  InventoryPage,
+  OrdersPage,
+  PhonesPage,
+  RepairsPage,
+  ReportsPage,
+  SettingsPage,
+  StaffPage,
+} from "./pages/admin";
 import { PublicRoute } from "./components";
 import { useAuthVerify } from "./hooks";
+import { SidebarContentPage } from "./components/sidebar";
 
 function App() {
   // Verify auth on app load
@@ -34,8 +46,19 @@ function App() {
         />
 
         {/* Protected Routes - Require Admin Role */}
-        <Route path="/admin/dashboard" element={<Dashboard />} />
-        <Route path="/admin/imei-scanner" element={<IMEIScanner />} />
+        <Route path="/admin" element={<SidebarContentPage />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="imei-scanner" element={<IMEIScanner />} />
+          <Route path="phones" element={<PhonesPage />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="inventory" element={<InventoryPage />} />
+          <Route path="customers" element={<CustomersPage />} />
+          <Route path="repairs" element={<RepairsPage />} />
+          <Route path="imei-scanner" element={<IMEIScanner />} />
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="staff" element={<StaffPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
 
         {/* 404 - Catch all */}
         <Route path="*" element={<Navigate to="/" replace />} />

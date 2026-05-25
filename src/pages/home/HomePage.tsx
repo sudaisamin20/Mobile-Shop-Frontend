@@ -17,7 +17,26 @@ import {
   Tabs,
   PageBackground,
 } from "../../components/ui/index";
-import { ArrowRight, Phone } from "lucide-react";
+import {
+  ArrowRight,
+  Phone,
+  Wrench,
+  Battery,
+  Droplets,
+  Lock,
+  Smile,
+  Smartphone,
+  Star,
+  Target,
+  CheckCircle,
+  Tag,
+  Zap,
+  RefreshCw,
+  MapPin,
+  Clock,
+  MessageCircle,
+  Cpu,
+} from "lucide-react";
 
 import { Layout } from "../../layout";
 import { useAppSelector } from "../../app/index";
@@ -30,7 +49,7 @@ const PHONES = [
     price: "PKR 459,999",
     oldPrice: "PKR 499,999",
     description: "Titanium. So strong. So light. So Pro.",
-    emoji: "📱",
+    icon: Smartphone,
     badge: { label: "Best Seller", variant: "yellow" as const },
     gradient: "from-purple-600 to-blue-600",
     rating: 5,
@@ -40,7 +59,7 @@ const PHONES = [
     name: "Samsung Galaxy S24 Ultra",
     price: "PKR 389,999",
     description: "AI-powered. Galaxy's most powerful phone.",
-    emoji: "📲",
+    icon: Cpu,
     badge: { label: "New", variant: "blue" as const },
     gradient: "from-blue-600 to-purple-600",
     rating: 5,
@@ -50,7 +69,7 @@ const PHONES = [
     name: "OnePlus 12",
     price: "PKR 179,999",
     description: "Hasselblad camera. 100W fast charge.",
-    emoji: "🔋",
+    icon: Zap,
     badge: { label: "Hot Deal", variant: "orange" as const },
     gradient: "from-purple-700 to-yellow-500",
     rating: 4,
@@ -60,7 +79,7 @@ const PHONES = [
     name: "Xiaomi 14 Ultra",
     price: "PKR 249,999",
     description: "Leica optics. Photography redefined.",
-    emoji: "📷",
+    icon: Smartphone,
     badge: { label: "Popular", variant: "purple" as const },
     gradient: "from-yellow-500 to-purple-600",
     rating: 4,
@@ -77,22 +96,26 @@ const PHONE_TABS = [
 
 const SERVICES = [
   {
-    icon: "🔧",
+    icon: Wrench,
+    iconColor: "text-blue-400",
     title: "Screen Repair",
     desc: "Cracked screen? Fixed same day.",
   },
   {
-    icon: "🔋",
+    icon: Battery,
+    iconColor: "text-green-400",
     title: "Battery Replace",
     desc: "Restore your phone's life in 30 mins.",
   },
   {
-    icon: "💧",
+    icon: Droplets,
+    iconColor: "text-cyan-400",
     title: "Water Damage",
     desc: "Expert liquid damage restoration.",
   },
   {
-    icon: "🔒",
+    icon: Lock,
+    iconColor: "text-purple-400",
     title: "Network Unlock",
     desc: "Unlock any carrier, any phone.",
   },
@@ -113,29 +136,29 @@ const STATS = [
   {
     number: "10K+",
     label: "Happy Customers",
-    icon: "😊",
+    icon: Smile,
     accent: "yellow" as const,
   },
   {
     number: "5K+",
     label: "Phones Sold",
-    icon: "📱",
+    icon: Smartphone,
     accent: "purple" as const,
   },
   {
     number: "8+",
     label: "Years Experience",
-    icon: "⭐",
+    icon: Star,
     accent: "blue" as const,
   },
-  { number: "24/7", label: "Support", icon: "🎯", accent: "green" as const },
+  { number: "24/7", label: "Support", icon: Target, accent: "green" as const },
 ];
 
 const WHY_US = [
-  { icon: "✅", text: "100% Genuine Products with Official Warranty" },
-  { icon: "🏷️", text: "Best Prices Guaranteed — We Beat Any Quote" },
-  { icon: "⚡", text: "Same-Day Repairs by Certified Technicians" },
-  { icon: "🔄", text: "Easy Exchange & Upgrade Program" },
+  { icon: CheckCircle, text: "100% Genuine Products with Official Warranty" },
+  { icon: Tag, text: "Best Prices Guaranteed — We Beat Any Quote" },
+  { icon: Zap, text: "Same-Day Repairs by Certified Technicians" },
+  { icon: RefreshCw, text: "Easy Exchange & Upgrade Program" },
 ];
 
 // ── Component ─────────────────────────────────
@@ -151,7 +174,7 @@ export default function HomePage() {
 
   return (
     <PageBackground>
-      <Layout title="Home - Basit Mobile Zone">
+      <Layout title="Home - Basit Mobile Zone" navbar footer>
         {/* ── Hero ── */}
         <section className="relative min-h-screen flex items-center pt-24 pb-16 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto w-full">
@@ -224,8 +247,8 @@ export default function HomePage() {
                 <div className="relative w-full max-w-sm">
                   <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-yellow-400/15 via-purple-600/15 to-blue-600/15 blur-2xl scale-110" />
                   <Card padding="lg" className="relative">
-                    <div className="text-7xl text-center mb-4 drop-shadow-2xl">
-                      📱
+                    <div className="text-6xl text-center mb-4 drop-shadow-2xl">
+                      <Smartphone size={64} className="mx-auto text-yellow-400" />
                     </div>
                     <Card.Header>
                       <div className="text-center space-y-1">
@@ -278,16 +301,19 @@ export default function HomePage() {
         {/* ── Stats ── */}
         <Section py="sm">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {STATS.map((s, i) => (
-              <AnimateIn key={s.label} delay={i * 100}>
-                <StatCard
-                  label={s.label}
-                  value={s.number}
-                  icon={s.icon}
-                  accent={s.accent}
-                />
-              </AnimateIn>
-            ))}
+            {STATS.map((s, i) => {
+              const IconComponent = s.icon;
+              return (
+                <AnimateIn key={s.label} delay={i * 100}>
+                  <StatCard
+                    label={s.label}
+                    value={s.number}
+                    icon={<IconComponent size={24} className="text-yellow-400" />}
+                    accent={s.accent}
+                  />
+                </AnimateIn>
+              );
+            })}
           </div>
         </Section>
 
@@ -315,7 +341,7 @@ export default function HomePage() {
                   price={phone.price}
                   oldPrice={phone.oldPrice}
                   description={phone.description}
-                  emoji={phone.emoji}
+                  icon={phone.icon}
                   badge={phone.badge}
                   gradient={phone.gradient}
                   rating={phone.rating}
@@ -342,26 +368,29 @@ export default function HomePage() {
           />
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {SERVICES.map((s, i) => (
-              <AnimateIn key={s.title} delay={i * 100}>
-                <Card hoverable glowColor="yellow" className="group">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                    {s.icon}
-                  </div>
-                  <h3 className="text-white font-bold text-base mb-2">
-                    {s.title}
-                  </h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">
-                    {s.desc}
-                  </p>
-                  <div className="mt-4">
-                    <Button variant="ghost" size="sm" icon="→">
-                      Learn more
-                    </Button>
-                  </div>
-                </Card>
-              </AnimateIn>
-            ))}
+            {SERVICES.map((s, i) => {
+              const IconComponent = s.icon;
+              return (
+                <AnimateIn key={s.title} delay={i * 100}>
+                  <Card hoverable glowColor="yellow" className="group">
+                    <div className={`${s.iconColor} mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                      <IconComponent size={36} strokeWidth={1.5} />
+                    </div>
+                    <h3 className="text-white font-bold text-base mb-2">
+                      {s.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm leading-relaxed">
+                      {s.desc}
+                    </p>
+                    <div className="mt-4">
+                      <Button variant="ghost" size="sm" icon="→">
+                        Learn more
+                      </Button>
+                    </div>
+                  </Card>
+                </AnimateIn>
+              );
+            })}
           </div>
         </Section>
 
@@ -409,16 +438,20 @@ export default function HomePage() {
                 support.
               </p>
               <div className="space-y-4 pt-2">
-                {WHY_US.map((item, i) => (
-                  <div key={i} className="flex items-center gap-4 group">
-                    <span className="text-xl group-hover:scale-125 transition-transform">
-                      {item.icon}
-                    </span>
-                    <span className="text-gray-300 group-hover:text-white transition-colors">
-                      {item.text}
-                    </span>
-                  </div>
-                ))}
+                {WHY_US.map((item, i) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <div key={i} className="flex items-center gap-4 group">
+                      <IconComponent
+                        size={20}
+                        className="text-yellow-400 group-hover:scale-125 transition-transform flex-shrink-0"
+                      />
+                      <span className="text-gray-300 group-hover:text-white transition-colors">
+                        {item.text}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </AnimateIn>
 
@@ -426,7 +459,9 @@ export default function HomePage() {
             <AnimateIn delay={200}>
               <Card padding="lg">
                 <div className="space-y-5">
-                  <div className="text-5xl">📍</div>
+                  <div className="text-4xl text-red-400">
+                    <MapPin size={40} />
+                  </div>
                   <div>
                     <h3 className="text-2xl font-black text-white mb-1">
                       Find Us In Islamabad
@@ -438,15 +473,19 @@ export default function HomePage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <Card padding="sm" className="bg-white/5">
-                      <p className="text-yellow-400 font-bold text-sm">
-                        ⏰ Hours
+                      <p className="text-yellow-400 font-bold text-sm flex items-center gap-2">
+                        <Clock size={14} />
+                        Hours
                       </p>
                       <p className="text-gray-300 text-sm mt-1">
                         9 AM – 9 PM Daily
                       </p>
                     </Card>
                     <Card padding="sm" className="bg-white/5">
-                      <p className="text-blue-400 font-bold text-sm">📞 Call</p>
+                      <p className="text-blue-400 font-bold text-sm flex items-center gap-2">
+                        <Phone size={14} />
+                        Call
+                      </p>
                       <p className="text-gray-300 text-sm mt-1">0300-1234567</p>
                     </Card>
                   </div>
@@ -481,7 +520,11 @@ export default function HomePage() {
                   available!
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-                  <Button variant="primary" size="lg" iconLeft="📲">
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    iconLeft={<MessageCircle size={18} />}
+                  >
                     WhatsApp Now
                   </Button>
                   <Button variant="dark" size="lg">

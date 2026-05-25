@@ -1,9 +1,11 @@
+import type { ReactNode } from "react";
+
 type AccentColor = "yellow" | "purple" | "blue" | "green" | "red";
 
 interface StatCardProps {
   label: string;
   value: string;
-  icon?: string;
+  icon?: string | ReactNode;
   trend?: string; // e.g. "+12%" or "-3%"
   trendDown?: boolean; // if true, trend is red. Auto-detected from "-" prefix if omitted.
   accent?: AccentColor;

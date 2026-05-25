@@ -15,8 +15,7 @@
 // ─────────────────────────────────────────────
 
 "use client";
-import type { ReactNode } from "react";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { X } from "lucide-react";
 
 interface ModalProps {
@@ -66,14 +65,14 @@ function ModalRoot({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+      className="fixed inset-0 z-[99999] flex items-center justify-center px-4 pointer-events-none"
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? "modal-title" : undefined}
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-bmz-fade-in"
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm animate-bmz-fade-in pointer-events-auto"
         onClick={disableBackdropClose ? undefined : onClose}
         aria-hidden="true"
       />
@@ -81,7 +80,7 @@ function ModalRoot({
       {/* Panel */}
       <div
         className={[
-          "relative w-full max-h-[90vh] flex flex-col",
+          "relative w-full max-h-[90vh] flex flex-col pointer-events-auto",
           "bg-gradient-to-br from-[#1a0a2e] to-[#0f0520]",
           "border border-white/15 rounded-3xl shadow-2xl shadow-black/60",
           "animate-bmz-modal-in",
@@ -171,118 +170,3 @@ function ModalFooter({ children, align = "end", className = "" }: ModalFooterPro
 
 export const Modal = Object.assign(ModalRoot, { Footer: ModalFooter });
 export default Modal;
-
-
-
-// import { type ReactNode, useEffect } from "react";
-
-// interface ModalProps {
-//   open: boolean;
-//   onClose: () => void;
-//   title?: string;
-//   subtitle?: string;
-//   size?: "sm" | "md" | "lg" | "xl";
-//   children: ReactNode;
-// }
-
-// const sizeMap = {
-//   sm: "max-w-sm",
-//   md: "max-w-lg",
-//   lg: "max-w-2xl",
-//   xl: "max-w-4xl",
-// };
-
-// function ModalRoot({
-//   open,
-//   onClose,
-//   title,
-//   subtitle,
-//   size = "md",
-//   children,
-// }: ModalProps) {
-//   // Lock body scroll when open
-//   useEffect(() => {
-//     if (open) {
-//       document.body.style.overflow = "hidden";
-//     } else {
-//       document.body.style.overflow = "";
-//     }
-//     return () => {
-//       document.body.style.overflow = "";
-//     };
-//   }, [open]);
-
-//   if (!open) return null;
-
-//   return (
-//     <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
-//       {/* Backdrop */}
-//       <div
-//         className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fade-in"
-//         onClick={onClose}
-//       />
-
-//       {/* Panel */}
-//       <div
-//         className={[
-//           "relative w-full bg-gradient-to-br from-[#1a0a2e] to-[#0f0520]",
-//           "border border-white/15 rounded-3xl shadow-2xl shadow-black/50",
-//           "animate-modal-in",
-//           sizeMap[size],
-//         ].join(" ")}
-//       >
-//         {/* Header */}
-//         {(title || subtitle) && (
-//           <div className="flex items-start justify-between p-6 pb-4 border-b border-white/8">
-//             <div>
-//               {title && (
-//                 <h3 className="text-white font-black text-xl">{title}</h3>
-//               )}
-//               {subtitle && (
-//                 <p className="text-gray-400 text-sm mt-1">{subtitle}</p>
-//               )}
-//             </div>
-//             <button
-//               onClick={onClose}
-//               className="ml-4 w-8 h-8 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-all"
-//             >
-//               ✕
-//             </button>
-//           </div>
-//         )}
-
-//         {/* Body */}
-//         <div className="p-6">{children}</div>
-//       </div>
-
-//       <style>{`
-//         @keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
-//         @keyframes modal-in { from { opacity: 0; transform: scale(0.94) translateY(10px) } to { opacity: 1; transform: scale(1) translateY(0) } }
-//         .animate-fade-in  { animation: fade-in  0.2s ease forwards }
-//         .animate-modal-in { animation: modal-in 0.3s cubic-bezier(0.22,1,0.36,1) forwards }
-//       `}</style>
-//     </div>
-//   );
-// }
-
-// function ModalFooter({
-//   children,
-//   className = "",
-// }: {
-//   children: ReactNode;
-//   className?: string;
-// }) {
-//   return (
-//     <div
-//       className={[
-//         "flex items-center justify-end gap-3 mt-6 pt-4 border-t border-white/8",
-//         className,
-//       ].join(" ")}
-//     >
-//       {children}
-//     </div>
-//   );
-// }
-
-// export const Modal = Object.assign(ModalRoot, { Footer: ModalFooter });
-// export default Modal;

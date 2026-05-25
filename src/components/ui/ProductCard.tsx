@@ -1,5 +1,6 @@
 import { Badge } from "./Badge";
 import { Button } from "./Button";
+import type { LucideIcon } from "lucide-react";
 
 interface ProductCardProps {
   name: string;
@@ -7,6 +8,7 @@ interface ProductCardProps {
   oldPrice?: string; // shows strikethrough if provided
   description?: string;
   emoji?: string;
+  icon?: LucideIcon;
   imageUrl?: string;
   badge?: {
     label: string;
@@ -26,6 +28,7 @@ export function ProductCard({
   oldPrice,
   description,
   emoji = "📱",
+  icon: IconComponent,
   imageUrl,
   badge,
   gradient = "from-purple-600 to-blue-600",
@@ -65,7 +68,7 @@ export function ProductCard({
         </button>
       )}
 
-      {/* Image / Emoji */}
+      {/* Image / Emoji / Icon */}
       <div
         className={[
           "w-full h-28 flex items-center justify-center rounded-2xl mb-5",
@@ -79,6 +82,8 @@ export function ProductCard({
             alt={name}
             className="h-full w-full object-contain rounded-2xl"
           />
+        ) : IconComponent ? (
+          <IconComponent size={56} className="drop-shadow-lg text-white" />
         ) : (
           <span className="text-6xl drop-shadow-lg">{emoji}</span>
         )}

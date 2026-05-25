@@ -2,7 +2,7 @@
 export interface IUser {
   id: string;
   email: string;
-  name: string;
+  fullName: string;
   avatar?: string;
   role: 'ADMIN' | 'USER';
   createdAt: string;
@@ -17,7 +17,7 @@ export interface ILoginRequest {
 export interface ISignupRequest {
   email: string;
   password: string;
-  name: string;
+  fullName: string;
   confirmPassword: string;
 }
 
