@@ -100,7 +100,7 @@ export function Sidebar({
   return (
     <aside
       className={[
-        "flex flex-col h-full select-none",
+        "flex flex-col h-full select-none overflow-y-hidden",
         "bg-[#0b0614]/95 backdrop-blur-xl",
         "border-r border-white/8",
         "transition-all duration-300 ease-in-out",

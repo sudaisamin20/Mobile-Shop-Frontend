@@ -29,7 +29,7 @@ const toastStyles: Record<ToastType, { bg: string; icon: string }> = {
 
 export function ToastContainer({ toasts }: { toasts: ToastItem[] }) {
   return (
-    <div className="fixed bottom-6 right-6 z-[200] flex flex-col gap-3 pointer-events-none">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none">
       {toasts.map((t) => (
         <div
           key={t.id}

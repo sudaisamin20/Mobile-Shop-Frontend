@@ -65,7 +65,7 @@ function ModalRoot({
 
   return (
     <div
-      className="fixed inset-0 z-[99999] flex items-center justify-center px-4 pointer-events-none"
+      className="fixed inset-0 z-[60] flex items-center justify-center px-4 pointer-events-none"
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? "modal-title" : undefined}

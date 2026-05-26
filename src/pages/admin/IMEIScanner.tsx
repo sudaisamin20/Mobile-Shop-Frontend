@@ -16,12 +16,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import { BarcodeFormat, DecodeHintType } from "@zxing/library";
 import {
-  LayoutDashboard,
-  Smartphone,
-  ShoppingBag,
-  Users,
-  Wrench,
-  Settings,
   ScanBarcode,
   Camera,
   CameraOff,
@@ -42,13 +36,11 @@ import {
   useToast,
   ToastContainer,
 } from "../../components/ui/Misc";
-import { Button } from "../../components/ui/Button";
-import { Badge } from "../../components/ui/Badge";
-import { Card } from "../../components/ui/Card";
-import { Input } from "../../components/ui/Input";
-import { Modal } from "../../components/ui/Modal";
-import { AnimateIn } from "../../components/ui/Section";
+import { Button, Badge, Card, Input, Modal, AnimateIn } from "../../components/ui";
+import { DeviceDetailsModal } from "../../components/inventory";
 import { Layout } from "../../layout";
+import { useInventory } from "../../hooks/useInventory";
+import type { ICreateDeviceRequest } from "../../interfaces/inventory";
 
 // ── Types ─────────────────────────────────────
 
@@ -216,10 +208,8 @@ function HistoryRow({
 // ── Main Page ─────────────────────────────────
 
 const IMEIScanner = () => {
-  // Sidebar state
-  //   const [activeNav, setActiveNav] = useState("imei");
-  //   const [collapsed, setCollapsed] = useState(false);
-  //   const [mobileOpen, setMobileOpen] = useState(false);
+  // Inventory hooks
+  const { addDevice } = useInventory();
 
   // Scanner state
   const [scanning, setScanning] = useState(false);
@@ -232,6 +222,9 @@ const IMEIScanner = () => {
   const [detailItem, setDetailItem] = useState<ScannedIMEI | null>(null);
   const [camDropOpen, setCamDropOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  
+  // Device details modal state
+  const [showDeviceModal, setShowDeviceModal] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const readerRef = useRef<BrowserMultiFormatReader | null>(null);
@@ -305,8 +298,10 @@ const IMEIScanner = () => {
     };
 
     setScanResult(imei);
-    // Don't add to history directly - show modal for confirmation
     setDetailItem(entry);
+    
+    // Add to scan history automatically
+    setHistory((prev) => [entry, ...prev]);
 
     addToast({
       message: valid
@@ -314,19 +309,23 @@ const IMEIScanner = () => {
         : `⚠️ Scanned: ${imei} (invalid checksum)`,
       type: valid ? "success" : "warning",
     });
+    
+    // Open device details modal to save to inventory
+    setShowDeviceModal(true);
   };
 
-  // ── Add to history after confirmation ────
+  // ── Handle Save Device to Inventory ─────
 
-  const handleAddToHistory = () => {
-    if (detailItem) {
-      setHistory((prev) => [detailItem, ...prev]);
-      addToast({
-        message: `✅ IMEI added to history`,
-        type: "success",
-      });
-      setDetailItem(null);
-    }
+  const handleSaveDevice = (deviceData: ICreateDeviceRequest) => {
+    addDevice(deviceData);
+    addToast({
+      message: `✅ Device added to inventory: ${deviceData.brand} ${deviceData.model}`,
+      type: "success",
+    });
+    setShowDeviceModal(false);
+    setDetailItem(null);
+    setScanResult("");
+    setManualIMEI("");
   };
 
   // ── Start scanner ─────────────────────────
@@ -819,82 +818,15 @@ const IMEIScanner = () => {
           </div>
         </div>
 
-        {/* ── Detail Modal ── */}
-        <Modal
-          open={!!detailItem}
-          onClose={() => setDetailItem(null)}
-          title="IMEI Details"
-          subtitle="Scanned device information"
-          size="sm"
-        >
-          {detailItem && (
-            <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-600/15 to-blue-600/10 border border-purple-500/20 text-center">
-                <p className="text-gray-400 text-xs mb-1">IMEI</p>
-                <p className="text-white font-mono font-black text-xl tracking-widest break-all">
-                  {formatIMEI(detailItem.imei)}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                {[
-                  {
-                    label: "Validity",
-                    value: detailItem.valid
-                      ? "✅ Valid (Luhn check passed)"
-                      : "❌ Invalid checksum",
-                  },
-                  {
-                    label: "Method",
-                    value:
-                      detailItem.method === "camera"
-                        ? "📷 Camera scan"
-                        : "⌨️ Manual entry",
-                  },
-                  { label: "Scanned At", value: detailItem.scannedAt },
-                  { label: "TAC Code", value: detailItem.imei.slice(0, 8) },
-                  { label: "Serial No.", value: detailItem.imei.slice(8, 14) },
-                  { label: "Check Digit", value: detailItem.imei.slice(14) },
-                ].map(({ label, value }) => (
-                  <div
-                    key={label}
-                    className="flex justify-between items-center py-2 border-b border-white/6"
-                  >
-                    <span className="text-gray-400 text-sm">{label}</span>
-                    <span className="text-white text-sm font-medium">
-                      {value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <Modal.Footer>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setDetailItem(null)}
-                >
-                  Close
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  iconLeft={<ClipboardCopy size={13} />}
-                  onClick={() => copyToClipboard(detailItem.imei)}
-                >
-                  Copy
-                </Button>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={handleAddToHistory}
-                >
-                  Add to History
-                </Button>
-              </Modal.Footer>
-            </div>
-          )}
-        </Modal>
+        {/* ── Device Details Modal ── */}
+        <DeviceDetailsModal
+          open={showDeviceModal}
+          onClose={() => setShowDeviceModal(false)}
+          onSave={handleSaveDevice}
+          initialIMEI={detailItem?.imei}
+          initialTAC={detailItem?.imei.slice(0, 8)}
+          initialBrand={detailItem?.brand}
+        />
 
         <ToastContainer toasts={toasts} />
 

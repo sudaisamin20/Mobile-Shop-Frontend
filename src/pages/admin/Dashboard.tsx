@@ -38,19 +38,12 @@ import { Table } from "../../components/ui/Table";
 import { Modal } from "../../components/ui/Modal";
 import { Input, Select, Textarea } from "../../components/ui/Input";
 import { AnimateIn } from "../../components/ui/Section";
-import type { NavItem } from "../../components/sidebar/Sidebar";
-import { Layout } from "../../layout";
+import { DeviceDetailsModal } from "../../components/inventory";
+import { MobileSidebarOverlay } from "../../components/sidebar/Sidebar";
 
 // ── Nav definition ────────────────────────────
 
-const NAV_ITEMS: NavItem[] = [
-  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { key: "phones", label: "Phones", icon: Smartphone, badge: 5 },
-  { key: "orders", label: "Orders", icon: ShoppingBag, badge: 42 },
-  { key: "customers", label: "Customers", icon: Users },
-  { key: "repairs", label: "Repairs", icon: Wrench, badge: 7 },
-  { key: "settings", label: "Settings", icon: Settings, dividerAbove: true },
-];
+
 
 // ── Mock data ─────────────────────────────────
 
@@ -158,17 +151,6 @@ const ORDERS: Order[] = [
   },
 ];
 
-const BRANDS = [
-  "Apple",
-  "Samsung",
-  "OnePlus",
-  "Xiaomi",
-  "Oppo",
-  "Vivo",
-  "Realme",
-  "Google",
-];
-
 const ORDER_TABS = [
   { key: "all", label: "All", count: 5 },
   { key: "completed", label: "Completed", count: 2 },
@@ -193,96 +175,6 @@ const stockBadge = (s: Phone["stockStatus"], stock: number) => {
   return <Badge variant="green">{stock} in stock</Badge>;
 };
 
-// ── Add Phone Modal ───────────────────────────
-
-function AddPhoneModal({
-  open,
-  onClose,
-  onSuccess,
-}: {
-  open: boolean;
-  onClose: () => void;
-  onSuccess: () => void;
-}) {
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      onSuccess();
-      onClose();
-    }, 1500);
-  };
-
-  return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      title="Add New Phone"
-      subtitle="Fill in the details to add a phone to inventory"
-      size="md"
-    >
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          label="Phone Name"
-          placeholder="e.g. iPhone 15 Pro Max"
-          required
-        />
-
-        <div className="grid grid-cols-2 gap-4">
-          <Select
-            label="Brand"
-            options={BRANDS.map((b) => ({ value: b.toLowerCase(), label: b }))}
-            placeholder="Select brand"
-            required
-          />
-          <Input
-            label="Price (PKR)"
-            type="number"
-            placeholder="459999"
-            prefix="₨"
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <Input
-            label="Stock Quantity"
-            type="number"
-            placeholder="10"
-            required
-          />
-          <Select
-            label="Condition"
-            options={[
-              { value: "new", label: "Brand New" },
-              { value: "refurb", label: "Refurbished" },
-            ]}
-            placeholder="Select condition"
-          />
-        </div>
-
-        <Textarea
-          label="Description"
-          placeholder="Brief description of the phone..."
-          rows={3}
-        />
-
-        <Modal.Footer>
-          <Button variant="ghost" size="md" type="button" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" size="md" type="submit" loading={loading}>
-            Add Phone
-          </Button>
-        </Modal.Footer>
-      </form>
-    </Modal>
-  );
-}
-
 // ── Dashboard ─────────────────────────────────
 
 const Dashboard = () => {
@@ -290,23 +182,26 @@ const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [orderTab, setOrderTab] = useState("all");
-  const [addPhoneOpen, setAddPhoneOpen] = useState(false);
+  const [showDeviceModal, setShowDeviceModal] = useState(false);
   const { toasts, addToast } = useToast();
 
   const filteredOrders =
     orderTab === "all" ? ORDERS : ORDERS.filter((o) => o.status === orderTab);
 
-  const navLabel =
-    NAV_ITEMS.find((n) => n.key === activeNav)?.label ?? "Dashboard";
+  const handleSaveDevice = (phone: Omit<Phone, "id" | "stockStatus">) => {
+    addToast({
+      message: `Saved device: ${phone.name} (${phone.brand})`,
+      type: "success",
+    });
+    setShowDeviceModal(false);
+  };
 
   return (
     <PageBackground>
-      <Layout title="Dashboard - Basit Mobile Zone">
-
       <div className="flex h-screen overflow-hidden">
+        
         {/* ── Main Area ── */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-
           {/* ── Scrollable body ── */}
           <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6">
             {/* Stats */}
@@ -352,7 +247,7 @@ const Dashboard = () => {
                   size="sm"
                   iconLeft={<Plus size={14} />}
                   fullWidth
-                  onClick={() => setAddPhoneOpen(true)}
+                  onClick={() => setShowDeviceModal(true)}
                 >
                   Add Phone
                 </Button>
@@ -576,7 +471,7 @@ const Dashboard = () => {
                       variant="primary"
                       size="sm"
                       iconLeft={<Plus size={14} />}
-                      onClick={() => setAddPhoneOpen(true)}
+                      onClick={() => setShowDeviceModal(true)}
                     >
                       Add Phone
                     </Button>
@@ -667,18 +562,18 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Add Phone Modal */}
-      <AddPhoneModal
-        open={addPhoneOpen}
-        onClose={() => setAddPhoneOpen(false)}
-        onSuccess={() =>
-          addToast({ message: "Phone added to inventory!", type: "success" })
-        }
+      {/* Device Details Modal — opens on Add Phone click */}
+      <DeviceDetailsModal
+        open={showDeviceModal}
+        onClose={() => setShowDeviceModal(false)}
+        onSave={handleSaveDevice}
+        initialIMEI=""
+        initialTAC=""
+        initialBrand=""
       />
 
       {/* Toast notifications */}
       <ToastContainer toasts={toasts} />
-      </Layout>
     </PageBackground>
   );
 };

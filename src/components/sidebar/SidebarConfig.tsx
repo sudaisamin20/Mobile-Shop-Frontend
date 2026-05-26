@@ -46,6 +46,12 @@ export const SidebarConfig: Record<BMZRole, NavItem[]> = {
       href:  "/admin/dashboard",
     },
     {
+      key:   "imei",
+      label: "IMEI Scanner",
+      icon:  ScanBarcode,
+      href:  "/admin/imei-scanner",
+    },
+    {
       key:   "phones",
       label: "Phones",
       icon:  Smartphone,
@@ -77,12 +83,6 @@ export const SidebarConfig: Record<BMZRole, NavItem[]> = {
       icon:  Wrench,
       href:  "/admin/repairs",
       badge: 0,           // pending repair jobs
-    },
-    {
-      key:   "imei",
-      label: "IMEI Scanner",
-      icon:  ScanBarcode,
-      href:  "/admin/imei-scanner",
     },
     {
       key:          "reports",

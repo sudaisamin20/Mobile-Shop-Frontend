@@ -14,7 +14,7 @@ const SidebarContentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
-  console.log('🔍 SidebarContentPage - User:', user);
+  console.log("🔍 SidebarContentPage - User:", user);
 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -25,7 +25,7 @@ const SidebarContentPage = () => {
 
   const getActiveKey = useCallback(() => {
     const match = navItems?.find(
-      (item) => item.href && location.pathname.startsWith(item.href),
+      (item: { href: string }) => item.href && location.pathname.startsWith(item.href),
     );
     return match?.key ?? navItems?.[0]?.key ?? "dashboard";
   }, [location.pathname, navItems]);
@@ -72,14 +72,14 @@ const SidebarContentPage = () => {
       */}
       <div className="flex min-h-screen">
         {/* ── Desktop Sidebar — sticky, NOT fixed ── */}
-        <div className="hidden lg:block h-screen sticky top-0 flex-shrink-0">
+        <div className="hidden lg:block h-screen fixed top-0 left-0 shrink-0">
           <Sidebar
             navItems={navItems}
             activeKey={activeKey}
             onNav={handleNav}
             collapsed={collapsed}
             onToggleCollapse={() => setCollapsed((c) => !c)}
-            user={{ name:  user?.fullName, role: user?.role }}
+            user={{ name: user?.fullName, role: user?.role }}
             onLogout={handleLogout}
           />
         </div>
@@ -110,7 +110,7 @@ const SidebarContentPage = () => {
                 navItems={navItems}
                 activeKey={activeKey}
                 onNav={handleNav}
-                user={{ name: user.fullName, role: user.role }}
+                user={{ name: user?.fullName, role: user?.role }}
                 onLogout={handleLogout}
               />
 
@@ -127,14 +127,15 @@ const SidebarContentPage = () => {
         )}
 
         {/* ── Main content ── */}
-        <div className="flex-1 flex flex-col min-h-screen min-w-0">
+        <div
+          className={`flex-1 flex flex-col min-h-screen min-w-0 transition-all duration-300 ${collapsed ? "lg:ml-[70px]" : "lg:ml-60"}`}
+        >
           {/* Topbar — sticky but NOT fixed, lives inside the flex child */}
           {/* z-[39] keeps it below modal (z-[99999]) and mobile overlay (z-[49]) */}
-          {/* <header className="sticky top-0 z-[39] flex items-center justify-between gap-3 px-4 sm:px-6 h-16 border-b border-white/8 bg-[#0b0614]/90 backdrop-blur-xl flex-shrink-0"> */}
-
-          {/* <div className="flex items-center gap-3"> */}
-          {/* Mobile hamburger */}
-          {/* <button
+          <header className="fixed w-full lg:hidden top-0 z-20 flex items-center justify-between gap-3 px-4 sm:px-6 h-16 border-b border-white/8 bg-[#0b0614]/90 backdrop-blur-xl flex-shrink-0">
+            <div className="flex items-center gap-3">
+              {/* Mobile hamburger */}
+              <button
                 onClick={openMobile}
                 aria-label="Open menu"
                 className="lg:hidden w-9 h-9 flex items-center justify-center rounded-xl text-gray-400 hover:text-white hover:bg-white/8 border border-white/8 transition-all duration-200 cursor-pointer"
@@ -144,7 +145,8 @@ const SidebarContentPage = () => {
 
               <div>
                 <h1 className="text-white font-black text-base leading-tight">
-                  {navItems.find((n) => n.key === activeKey)?.label ?? "Dashboard"}
+                  {navItems?.find((n: { key: string }) => n.key === activeKey)?.label ??
+                    "Dashboard"}
                 </h1>
                 <p className="text-gray-500 text-[11px]">
                   {new Date().toLocaleDateString("en-PK", {
@@ -157,18 +159,18 @@ const SidebarContentPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-3"> */}
-          {/* Search */}
-          {/* <label className="hidden sm:flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 w-44 lg:w-56 focus-within:border-purple-500/50 transition-colors cursor-text">
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Search */}
+              <label className="hidden sm:flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 w-44 lg:w-56 focus-within:border-purple-500/50 transition-colors cursor-text">
                 <Search size={13} className="text-gray-500 flex-shrink-0" />
                 <input
                   placeholder="Search..."
                   className="bg-transparent outline-none text-white placeholder-gray-600 w-full text-sm"
                 />
-              </label> */}
+              </label>
 
-          {/* Notifications */}
-          {/* <button
+              {/* Notifications */}
+              <button
                 aria-label="Notifications"
                 className="relative w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200 cursor-pointer"
               >
@@ -178,9 +180,9 @@ const SidebarContentPage = () => {
                 </span>
               </button>
 
-              <Avatar name={user.name} size="sm" status="online" />
+              <Avatar name={user?.fullName} size="sm" status="online" />
             </div>
-          </header> */}
+          </header>
 
           {/* Page content */}
           <Outlet />

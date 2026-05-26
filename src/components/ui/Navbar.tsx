@@ -94,7 +94,6 @@ export function Navbar({
                     onClick={() => {
                       navigate("/admin/dashboard");
                     }}
-                    className="text-sm text-gray-300 hover:text-white"
                   >
                     <LayoutDashboard size={16} />
                     <span>Dashboard</span>
