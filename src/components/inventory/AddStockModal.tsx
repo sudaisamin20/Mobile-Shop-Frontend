@@ -29,8 +29,6 @@ export interface ScannedIMEI {
   brand?: string;
 }
 
-
-
 // ── IMEI Validation (Luhn algorithm)
 function validateIMEI(imei: string): boolean {
   const cleaned = imei.replace(/\D/g, "");
@@ -91,7 +89,7 @@ export const AddStockModal = ({
   const [manualIMEI, setManualIMEI] = useState("");
   const [scannedIMEIs, setScannedIMEIs] = useState<ScannedIMEI[]>([]);
   const [facingMode, setFacingMode] = useState<"user" | "environment">(
-    "environment"
+    "environment",
   );
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -121,20 +119,43 @@ export const AddStockModal = ({
       setCameraActive(true);
 
       // Start decoding
-      await codeReaderRef.current.decodeFromVideoElement(
+      // Get available cameras
+      const devices = await BrowserMultiFormatReader.listVideoInputDevices();
+
+      if (!devices.length) {
+        setError("No camera found");
+        return;
+      }
+
+      // Prefer rear camera
+      const rearCamera =
+        devices.find((d) => /back|rear|environment/i.test(d.label)) ||
+        devices[0];
+
+      // Start decoding
+      await codeReaderRef.current.decodeFromVideoDevice(
+        rearCamera.deviceId,
         videoRef.current,
         (result, err) => {
-          if (result?.getText()) {
-            handleIMEIScan(result.getText());
+          if (result) {
+            const raw = result.getText();
+
+            // Extract 15-digit IMEI from barcode
+            const match = raw.match(/\d{15}/);
+
+            if (match) {
+              handleIMEIScan(match[0]);
+            }
           }
-          if (err && !(err instanceof Error && err.name === "NotFoundException")) {
+
+          if (err && err.name !== "NotFoundException") {
             console.warn("Scan error:", err);
           }
-        }
+        },
       );
     } catch (err) {
       setError(
-        `Camera access denied: ${err instanceof Error ? err.message : "Unknown error"}`
+        `Camera access denied: ${err instanceof Error ? err.message : "Unknown error"}`,
       );
       setCameraActive(false);
     }
@@ -288,7 +309,7 @@ export const AddStockModal = ({
                       onClick={() => {
                         stopCamera();
                         setFacingMode((prev) =>
-                          prev === "environment" ? "user" : "environment"
+                          prev === "environment" ? "user" : "environment",
                         );
                         setTimeout(startCamera, 200);
                       }}
@@ -352,7 +373,10 @@ export const AddStockModal = ({
           )}
           {successMessage && (
             <div className="flex items-center gap-2 p-3 bg-green-500/15 border border-green-500/30 rounded-lg">
-              <CheckCircle2 size={16} className="text-green-400 flex-shrink-0" />
+              <CheckCircle2
+                size={16}
+                className="text-green-400 flex-shrink-0"
+              />
               <p className="text-sm text-green-300">{successMessage}</p>
             </div>
           )}
@@ -373,17 +397,21 @@ export const AddStockModal = ({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         {scan.valid ? (
-                          <CheckCircle2 size={14} className="text-green-400 flex-shrink-0" />
+                          <CheckCircle2
+                            size={14}
+                            className="text-green-400 flex-shrink-0"
+                          />
                         ) : (
-                          <XCircle size={14} className="text-red-400 flex-shrink-0" />
+                          <XCircle
+                            size={14}
+                            className="text-red-400 flex-shrink-0"
+                          />
                         )}
                         <p className="text-sm font-mono text-white truncate">
                           {formatIMEI(scan.imei)}
                         </p>
                         {scan.brand && (
-                          <Badge className="text-xs">
-                            {scan.brand}
-                          </Badge>
+                          <Badge className="text-xs">{scan.brand}</Badge>
                         )}
                       </div>
                       <p className="text-xs text-gray-500 ml-5">
