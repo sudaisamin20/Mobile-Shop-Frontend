@@ -221,7 +221,7 @@
     const [detailItem, setDetailItem] = useState<ScannedIMEI | null>(null);
     const [camDropOpen, setCamDropOpen] = useState(false);
     const [copied, setCopied] = useState(false);
-    
+    console.log(detailItem)
     // Device details modal state
     const [showDeviceModal, setShowDeviceModal] = useState(false);
 
@@ -605,6 +605,7 @@
                             <Input
                                 placeholder="e.g. 357391089012345"
                                 value={manualIMEI}
+                                helper="Enter IMEI no"
                                 onChange={(e) => {
                                 // Allow only digits, max 15
                                 const v = e.target.value

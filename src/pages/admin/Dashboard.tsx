@@ -550,10 +550,12 @@ const Dashboard = () => {
       <DeviceDetailsModal
         open={showDeviceModal}
         onClose={() => setShowDeviceModal(false)}
-        onSave={handleSaveDevice}
-        initialIMEI=""
-        initialTAC=""
-        initialBrand=""
+        onSave={() => handleSaveDevice({
+          name: "New Phone",
+          brand: "Brand",
+          price: "PKR 0",
+          stock: 0,
+        })}
       />
 
       {/* Toast notifications */}

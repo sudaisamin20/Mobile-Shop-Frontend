@@ -28,17 +28,17 @@ import {
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import { BarcodeFormat, DecodeHintType } from "@zxing/library";
 
-import { Modal }   from "../ui/Modal";
-import { Button }  from "../ui/Button";
-import { Badge }   from "../ui/Badge";
+import { Modal } from "../ui/Modal";
+import { Button } from "../ui/Button";
+import { Badge } from "../ui/Badge";
 import { Input, Select, Textarea, Checkbox, RangeSlider } from "../ui/Input";
 
 // ── Types ─────────────────────────────────────────────────────────
 
-export type DeviceCondition   = "new" | "used" | "open-box" | "refurbished";
-export type PTAStatus         = "approved" | "pending" | "blocked" | "unknown";
+export type DeviceCondition = "new" | "used" | "open-box" | "refurbished";
+export type PTAStatus = "approved" | "pending" | "blocked" | "unknown";
 export type NetworkLockStatus = "unlocked" | "locked" | "unknown";
-export type StockStatus       = "available" | "low" | "out-of-stock" | "reserved";
+export type StockStatus = "available" | "low" | "out-of-stock" | "reserved";
 
 /** One full inventory entry — one per physical unit / per IMEI */
 export interface ICreateDeviceRequest {
@@ -75,8 +75,12 @@ export interface ICreateDeviceRequest {
   shelfLocation: string;
   notes: string;
   accessories: {
-    box: boolean; charger: boolean; cable: boolean;
-    earphones: boolean; cover: boolean; protector: boolean;
+    box: boolean;
+    charger: boolean;
+    cable: boolean;
+    earphones: boolean;
+    cover: boolean;
+    protector: boolean;
   };
   images: { front?: string; back?: string; invoice?: string };
 }
@@ -94,65 +98,79 @@ interface ScannedUnit {
 // ── Option lists ──────────────────────────────────────────────────
 
 const BRANDS = [
-  "Apple","Samsung","Xiaomi","OnePlus","Huawei",
-  "Oppo","Vivo","Realme","Motorola","Nothing","Google","Other",
-].map(b => ({ value: b, label: b }));
+  "Apple",
+  "Samsung",
+  "Xiaomi",
+  "OnePlus",
+  "Huawei",
+  "Oppo",
+  "Vivo",
+  "Realme",
+  "Motorola",
+  "Nothing",
+  "Google",
+  "Other",
+].map((b) => ({ value: b, label: b }));
 
 const CONDITION_OPTS = [
-  { value: "new",         label: "New"          },
-  { value: "open-box",    label: "Open Box"     },
-  { value: "used",        label: "Used"         },
-  { value: "refurbished", label: "Refurbished"  },
+  { value: "new", label: "New" },
+  { value: "open-box", label: "Open Box" },
+  { value: "used", label: "Used" },
+  { value: "refurbished", label: "Refurbished" },
 ];
-const SCREEN_OPTS  = [
-  { value: "perfect",         label: "Perfect"         },
+const SCREEN_OPTS = [
+  { value: "perfect", label: "Perfect" },
   { value: "minor-scratches", label: "Minor Scratches" },
-  { value: "major-damage",    label: "Major Damage"    },
-  { value: "broken",          label: "Broken"          },
+  { value: "major-damage", label: "Major Damage" },
+  { value: "broken", label: "Broken" },
 ];
 const SPEAKER_OPTS = [
-  { value: "working",     label: "Working"     },
-  { value: "partial",     label: "Partial"     },
+  { value: "working", label: "Working" },
+  { value: "partial", label: "Partial" },
   { value: "not-working", label: "Not Working" },
 ];
-const FACEID_OPTS  = [
-  { value: "working",       label: "Working"       },
+const FACEID_OPTS = [
+  { value: "working", label: "Working" },
   { value: "not-available", label: "Not Available" },
-  { value: "not-working",   label: "Not Working"   },
+  { value: "not-working", label: "Not Working" },
 ];
 const PTA_OPTS = [
   { value: "approved", label: "Approved" },
-  { value: "pending",  label: "Pending"  },
-  { value: "blocked",  label: "Blocked"  },
-  { value: "unknown",  label: "Unknown"  },
+  { value: "pending", label: "Pending" },
+  { value: "blocked", label: "Blocked" },
+  { value: "unknown", label: "Unknown" },
 ];
 const NETWORK_OPTS = [
   { value: "unlocked", label: "Unlocked" },
-  { value: "locked",   label: "Locked"  },
-  { value: "unknown",  label: "Unknown" },
+  { value: "locked", label: "Locked" },
+  { value: "unknown", label: "Unknown" },
 ];
 const COUNTRY_OPTS = [
   { value: "Pakistan", label: "Pakistan" },
-  { value: "Global",   label: "Global"   },
-  { value: "USA",      label: "USA"      },
-  { value: "EU",       label: "EU"       },
-  { value: "China",    label: "China"    },
-  { value: "UAE",      label: "UAE"      },
+  { value: "Global", label: "Global" },
+  { value: "USA", label: "USA" },
+  { value: "EU", label: "EU" },
+  { value: "China", label: "China" },
+  { value: "UAE", label: "UAE" },
 ];
 const STOCK_OPTS = [
-  { value: "available",    label: "Available"    },
-  { value: "low",          label: "Low Stock"    },
+  { value: "available", label: "Available" },
+  { value: "low", label: "Low Stock" },
   { value: "out-of-stock", label: "Out of Stock" },
-  { value: "reserved",     label: "Reserved"     },
+  { value: "reserved", label: "Reserved" },
 ];
 const WATERPAK_OPTS = [
   { value: "present", label: "Present" },
-  { value: "absent",  label: "Absent"  },
+  { value: "absent", label: "Absent" },
   { value: "damaged", label: "Damaged" },
 ];
 const ACCESSORY_LABELS: Record<string, string> = {
-  box: "Original Box", charger: "Charger", cable: "Cable",
-  earphones: "Earphones", cover: "Cover / Case", protector: "Screen Protector",
+  box: "Original Box",
+  charger: "Charger",
+  cable: "Cable",
+  earphones: "Earphones",
+  cover: "Cover / Case",
+  protector: "Screen Protector",
 };
 
 // ── Helpers ───────────────────────────────────────────────────────
@@ -164,7 +182,10 @@ function validateIMEI(imei: string): boolean {
   let sum = 0;
   for (let i = 0; i < 15; i++) {
     let n = parseInt(d[i]);
-    if (i % 2 === 1) { n *= 2; if (n > 9) n -= 9; }
+    if (i % 2 === 1) {
+      n *= 2;
+      if (n > 9) n -= 9;
+    }
     sum += n;
   }
   return sum % 10 === 0;
@@ -173,27 +194,36 @@ function validateIMEI(imei: string): boolean {
 function formatIMEI(raw: string): string {
   const d = raw.replace(/\D/g, "");
   if (d.length < 15) return d;
-  return `${d.slice(0,2)}-${d.slice(2,8)}-${d.slice(8,14)}-${d.slice(14)}`;
+  return `${d.slice(0, 2)}-${d.slice(2, 8)}-${d.slice(8, 14)}-${d.slice(14)}`;
 }
 
-function guessBrand(imei: string): string {
-  const prefix = imei.slice(0, 2);
-  const map: Record<string, string> = {
-    "35": "Apple", "01": "Samsung", "10": "Samsung",
-    "86": "Huawei", "45": "LG", "99": "OnePlus",
-  };
-  return map[prefix] ?? "";
-}
+// function guessBrand(imei: string): string {
+//   const prefix = imei.slice(0, 2);
+//   const map: Record<string, string> = {
+//     "35": "Apple", "01": "Samsung", "10": "Samsung",
+//     "86": "Huawei", "45": "LG", "99": "OnePlus",
+//   };
+//   return map[prefix] ?? "";
+// }
 
 // ── Image Uploader ────────────────────────────────────────────────
 
 function ImageUploader({
-  label, preview, onSelect,
-}: { label: string; preview?: string; onSelect: (b64: string) => void }) {
+  label,
+  preview,
+  onSelect,
+}: {
+  label: string;
+  preview?: string;
+  onSelect: (b64: string) => void;
+}) {
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { alert("Max 5MB"); return; }
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Max 5MB");
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => onSelect(reader.result as string);
     reader.readAsDataURL(file);
@@ -202,20 +232,34 @@ function ImageUploader({
     <div className="space-y-1.5">
       <p className="text-sm font-semibold text-gray-300">{label}</p>
       <label className="block cursor-pointer">
-        <div className={[
-          "relative w-full h-28 rounded-xl border-2 border-dashed",
-          "flex items-center justify-center overflow-hidden transition-all duration-200",
-          preview ? "border-purple-500/40" : "border-white/15 hover:border-yellow-400/40 hover:bg-yellow-400/5",
-        ].join(" ")}>
-          {preview
-            ? <img src={preview} alt={label} className="w-full h-full object-cover" />
-            : <div className="flex flex-col items-center gap-2 text-gray-500">
-                <ImageIcon size={22} />
-                <span className="text-xs">Click to upload</span>
-              </div>
-          }
+        <div
+          className={[
+            "relative w-full h-28 rounded-xl border-2 border-dashed",
+            "flex items-center justify-center overflow-hidden transition-all duration-200",
+            preview
+              ? "border-purple-500/40"
+              : "border-white/15 hover:border-yellow-400/40 hover:bg-yellow-400/5",
+          ].join(" ")}
+        >
+          {preview ? (
+            <img
+              src={preview}
+              alt={label}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="flex flex-col items-center gap-2 text-gray-500">
+              <ImageIcon size={22} />
+              <span className="text-xs">Click to upload</span>
+            </div>
+          )}
         </div>
-        <input type="file" accept="image/*" className="sr-only" onChange={handleFile} />
+        <input
+          type="file"
+          accept="image/*"
+          className="sr-only"
+          onChange={handleFile}
+        />
       </label>
     </div>
   );
@@ -223,33 +267,68 @@ function ImageUploader({
 
 // ── Default form ──────────────────────────────────────────────────
 
-type DeviceTemplate = Omit<ICreateDeviceRequest, "imei1" | "imei2" | "tacCode" | "serialNumber">;
+type DeviceTemplate = Omit<
+  ICreateDeviceRequest,
+  "imei1" | "imei2" | "tacCode" | "serialNumber"
+>;
 
 const defaultTemplate = (): DeviceTemplate => ({
-  brand: "", model: "", variant: "", color: "", countryVersion: "",
-  ptaStatus: "unknown", networkLockStatus: "unknown", condition: "new",
-  batteryHealth: 100, screenCondition: "perfect", cameraCondition: "perfect",
-  speakerCondition: "working", chargingCondition: "working",
-  faceIdStatus: "working", fingerprintStatus: "working", waterpakStatus: "present",
-  purchasePrice: 0, sellingPrice: 0, supplierName: "", warrantyDays: 0,
-  purchaseDate: new Date().toISOString().slice(0, 10), invoiceNumber: "",
-  quantity: 1, stockStatus: "available", shelfLocation: "", notes: "",
-  accessories: { box: true, charger: true, cable: true, earphones: false, cover: false, protector: false },
+  brand: "",
+  model: "",
+  variant: "",
+  color: "",
+  countryVersion: "",
+  ptaStatus: "unknown",
+  networkLockStatus: "unknown",
+  condition: "new",
+  batteryHealth: 100,
+  screenCondition: "perfect",
+  cameraCondition: "perfect",
+  speakerCondition: "working",
+  chargingCondition: "working",
+  faceIdStatus: "working",
+  fingerprintStatus: "working",
+  waterpakStatus: "present",
+  purchasePrice: 0,
+  sellingPrice: 0,
+  supplierName: "",
+  warrantyDays: 0,
+  purchaseDate: new Date().toISOString().slice(0, 10),
+  invoiceNumber: "",
+  quantity: 1,
+  stockStatus: "available",
+  shelfLocation: "",
+  notes: "",
+  accessories: {
+    box: true,
+    charger: true,
+    cable: true,
+    earphones: false,
+    cover: false,
+    protector: false,
+  },
   images: {},
 });
 
 // ── Tab types ─────────────────────────────────────────────────────
 
-type TabId = "basic" | "condition" | "pricing" | "inventory" | "accessories" | "media" | "units";
+type TabId =
+  | "basic"
+  | "condition"
+  | "pricing"
+  | "inventory"
+  | "accessories"
+  | "media"
+  | "units";
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
-  { id: "basic",       label: "Basic Info",    icon: <Package size={13} />     },
-  { id: "condition",   label: "Condition",     icon: <CheckCircle2 size={13} /> },
-  { id: "pricing",     label: "Pricing",       icon: <Package size={13} />     },
-  { id: "inventory",   label: "Inventory",     icon: <Package size={13} />     },
-  { id: "accessories", label: "Accessories",   icon: <Package size={13} />     },
-  { id: "media",       label: "Media",         icon: <ImageIcon size={13} />   },
-  { id: "units",       label: "Add Units",     icon: <ScanBarcode size={13} /> },
+  { id: "basic", label: "Basic Info", icon: <Package size={13} /> },
+  { id: "condition", label: "Condition", icon: <CheckCircle2 size={13} /> },
+  { id: "pricing", label: "Pricing", icon: <Package size={13} /> },
+  { id: "inventory", label: "Inventory", icon: <Package size={13} /> },
+  { id: "accessories", label: "Accessories", icon: <Package size={13} /> },
+  { id: "media", label: "Media", icon: <ImageIcon size={13} /> },
+  { id: "units", label: "Add Units", icon: <ScanBarcode size={13} /> },
 ];
 
 // ── IMEI Unit Scanner (final tab) ─────────────────────────────────
@@ -265,17 +344,22 @@ function UnitScanner({
   onRemove: (id: string) => void;
   templateBrand: string;
 }) {
-  const [mode, setMode]           = useState<"camera" | "manual">("manual");
-  const [scanning, setScanning]   = useState(false);
-  const [manualIMEI, setManual]   = useState("");
+  const [mode, setMode] = useState<"camera" | "manual">("manual");
+  const [scanning, setScanning] = useState(false);
+  const [manualIMEI, setManual] = useState("");
   const [manualIMEI2, setManual2] = useState("");
   const [scanError, setScanError] = useState("");
-  const videoRef  = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const readerRef = useRef<BrowserMultiFormatReader | null>(null);
-  const lastScan  = useRef<string>("");
+  const lastScan = useRef<string>("");
 
   const stopScan = useCallback(() => {
-    try { BrowserMultiFormatReader.releaseAllStreams(); } catch (_) {}
+    try {
+      BrowserMultiFormatReader.releaseAllStreams();
+    } catch (_) {
+        // Ignore errors from stopping camera
+        console.log(_)
+    }
     readerRef.current = null;
     setScanning(false);
     lastScan.current = "";
@@ -283,49 +367,69 @@ function UnitScanner({
 
   useEffect(() => () => stopScan(), [stopScan]);
 
-  const addUnit = useCallback((imei: string, imei2?: string) => {
-    const cleaned = imei.replace(/\D/g, "").slice(0, 15);
-    if (cleaned.length !== 15) return;
-    // Prevent duplicate IMEI
-    if (units.some(u => u.imei === cleaned)) {
-      setScanError(`IMEI ${formatIMEI(cleaned)} already added.`);
-      return;
-    }
-    setScanError("");
-    const unit: ScannedUnit = {
-      id: crypto.randomUUID(),
-      imei: cleaned,
-      imei2: imei2?.replace(/\D/g, "").slice(0, 15) || undefined,
-      valid: validateIMEI(cleaned),
-      addedAt: new Date().toLocaleTimeString("en-PK", { hour: "2-digit", minute: "2-digit" }),
-      savedToInventory: false,
-    };
-    onAdd(unit);
-  }, [units, onAdd]);
+  const addUnit = useCallback(
+    (imei: string, imei2?: string) => {
+      const cleaned = imei.replace(/\D/g, "").slice(0, 15);
+      if (cleaned.length !== 15) return;
+      // Prevent duplicate IMEI
+      if (units.some((u) => u.imei === cleaned)) {
+        setScanError(`IMEI ${formatIMEI(cleaned)} already added.`);
+        return;
+      }
+      setScanError("");
+      const unit: ScannedUnit = {
+        id: crypto.randomUUID(),
+        imei: cleaned,
+        imei2: imei2?.replace(/\D/g, "").slice(0, 15) || undefined,
+        valid: validateIMEI(cleaned),
+        addedAt: new Date().toLocaleTimeString("en-PK", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        savedToInventory: false,
+      };
+      onAdd(unit);
+    },
+    [units, onAdd],
+  );
 
   const startCamera = useCallback(async () => {
     if (!videoRef.current) return;
     setScanError("");
     try {
-      await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } } });
+      await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+      });
       const devices = await BrowserMultiFormatReader.listVideoInputDevices();
-      if (!devices.length) { setScanError("No camera found."); return; }
-      const rear = devices.find(d => /back|rear|environment/i.test(d.label)) ?? devices[0];
+      if (!devices.length) {
+        setScanError("No camera found.");
+        return;
+      }
+      const rear =
+        devices.find((d) => /back|rear|environment/i.test(d.label)) ??
+        devices[0];
       const hints = new Map();
       hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.CODE_128]);
       const reader = new BrowserMultiFormatReader(hints);
       readerRef.current = reader;
       setScanning(true);
-      await reader.decodeFromVideoDevice(rear.deviceId, videoRef.current, (result, err) => {
-        if (result) {
-          const raw = result.getText();
-          if (raw === lastScan.current) return;
-          lastScan.current = raw;
-          const match = raw.match(/\d{15}/);
-          if (match) { addUnit(match[0]); stopScan(); }
-        }
-        if (err && err?.name !== "NotFoundException") console.warn(err);
-      });
+      await reader.decodeFromVideoDevice(
+        rear.deviceId,
+        videoRef.current,
+        (result, err) => {
+          if (result) {
+            const raw = result.getText();
+            if (raw === lastScan.current) return;
+            lastScan.current = raw;
+            const match = raw.match(/\d{15}/);
+            if (match) {
+              addUnit(match[0]);
+              stopScan();
+            }
+          }
+          if (err && err?.name !== "NotFoundException") console.warn(err);
+        },
+      );
     } catch (e: any) {
       setScanError(e?.message ?? "Camera failed.");
       setScanning(false);
@@ -344,9 +448,10 @@ function UnitScanner({
       {/* Header */}
       <div className="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20">
         <p className="text-purple-300 text-sm leading-relaxed">
-          <span className="font-bold text-white">Device template saved.</span> Now scan or enter the IMEI for
-          each physical unit of this {templateBrand} you are adding to inventory.
-          Each unit gets its own unique IMEI entry.
+          <span className="font-bold text-white">Device template saved.</span>{" "}
+          Now scan or enter the IMEI for each physical unit of this{" "}
+          {templateBrand} you are adding to inventory. Each unit gets its own
+          unique IMEI entry.
         </p>
       </div>
 
@@ -356,7 +461,10 @@ function UnitScanner({
           variant={mode === "manual" ? "primary" : "dark"}
           size="sm"
           iconLeft={<Keyboard size={13} />}
-          onClick={() => { setMode("manual"); stopScan(); }}
+          onClick={() => {
+            setMode("manual");
+            stopScan();
+          }}
         >
           Manual Entry
         </Button>
@@ -377,7 +485,8 @@ function UnitScanner({
             <video
               ref={videoRef}
               className={`w-full h-full object-cover transition-opacity duration-300 ${scanning ? "opacity-100" : "opacity-0"}`}
-              muted playsInline
+              muted
+              playsInline
             />
             {!scanning && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
@@ -388,8 +497,16 @@ function UnitScanner({
             {/* Corner brackets */}
             {scanning && (
               <div className="absolute inset-0 pointer-events-none">
-                {["top-4 left-4 border-t-2 border-l-2","top-4 right-4 border-t-2 border-r-2","bottom-4 left-4 border-b-2 border-l-2","bottom-4 right-4 border-b-2 border-r-2"].map((c, i) => (
-                  <div key={i} className={`absolute w-8 h-8 border-yellow-400 rounded-sm ${c}`} />
+                {[
+                  "top-4 left-4 border-t-2 border-l-2",
+                  "top-4 right-4 border-t-2 border-r-2",
+                  "bottom-4 left-4 border-b-2 border-l-2",
+                  "bottom-4 right-4 border-b-2 border-r-2",
+                ].map((c, i) => (
+                  <div
+                    key={i}
+                    className={`absolute w-8 h-8 border-yellow-400 rounded-sm ${c}`}
+                  />
                 ))}
                 <div className="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent animate-pulse" />
                 <div className="absolute bottom-4 left-0 right-0 flex justify-center">
@@ -407,13 +524,40 @@ function UnitScanner({
             </div>
           )}
           <div className="flex gap-2">
-            {!scanning
-              ? <Button variant="primary" size="sm" fullWidth iconLeft={<Camera size={14} />} onClick={startCamera}>Start Camera</Button>
-              : <>
-                  <Button variant="danger" size="sm" fullWidth iconLeft={<CameraOff size={14} />} onClick={stopScan}>Stop</Button>
-                  <Button variant="dark" size="sm" iconLeft={<RefreshCw size={13} />} onClick={() => { stopScan(); setTimeout(startCamera, 400); }}>Restart</Button>
-                </>
-            }
+            {!scanning ? (
+              <Button
+                variant="primary"
+                size="sm"
+                fullWidth
+                iconLeft={<Camera size={14} />}
+                onClick={startCamera}
+              >
+                Start Camera
+              </Button>
+            ) : (
+              <>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  fullWidth
+                  iconLeft={<CameraOff size={14} />}
+                  onClick={stopScan}
+                >
+                  Stop
+                </Button>
+                <Button
+                  variant="dark"
+                  size="sm"
+                  iconLeft={<RefreshCw size={13} />}
+                  onClick={() => {
+                    stopScan();
+                    setTimeout(startCamera, 400);
+                  }}
+                >
+                  Restart
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -426,10 +570,19 @@ function UnitScanner({
               label="IMEI 1"
               placeholder="15-digit IMEI"
               value={manualIMEI}
-              onChange={e => setManual(e.target.value.replace(/\D/g, "").slice(0, 15))}
-              onKeyDown={e => e.key === "Enter" && manualIMEI.length === 15 && handleManualAdd()}
+              helper="Enter 15-digit IMEI"
+              onChange={(e) =>
+                setManual(e.target.value.replace(/\D/g, "").slice(0, 15))
+              }
+              onKeyDown={(e) =>
+                e.key === "Enter" &&
+                manualIMEI.length === 15 &&
+                handleManualAdd()
+              }
               suffix={
-                <span className={`text-[10px] font-mono ${manualIMEI.length === 15 ? "text-green-400" : "text-gray-500"}`}>
+                <span
+                  className={`text-[10px] font-mono ${manualIMEI.length === 15 ? "text-green-400" : "text-gray-500"}`}
+                >
                   {manualIMEI.length}/15
                 </span>
               }
@@ -440,9 +593,14 @@ function UnitScanner({
               label="IMEI 2 (Dual SIM — optional)"
               placeholder="Optional"
               value={manualIMEI2}
-              onChange={e => setManual2(e.target.value.replace(/\D/g, "").slice(0, 15))}
+              helper="Enter IMEI 2"
+              onChange={(e) =>
+                setManual2(e.target.value.replace(/\D/g, "").slice(0, 15))
+              }
               suffix={
-                <span className={`text-[10px] font-mono ${manualIMEI2.length === 15 ? "text-green-400" : "text-gray-500"}`}>
+                <span
+                  className={`text-[10px] font-mono ${manualIMEI2.length === 15 ? "text-green-400" : "text-gray-500"}`}
+                >
                   {manualIMEI2.length}/15
                 </span>
               }
@@ -467,23 +625,45 @@ function UnitScanner({
             <p className="text-sm font-semibold text-gray-300">
               Units Added — {units.length}
             </p>
-            <Badge variant={units.every(u => u.valid) ? "green" : "orange"} size="sm">
-              {units.filter(u => u.valid).length} valid
+            <Badge
+              variant={units.every((u) => u.valid) ? "green" : "orange"}
+              size="sm"
+            >
+              {units.filter((u) => u.valid).length} valid
             </Badge>
           </div>
           <div className="space-y-2 max-h-52 overflow-y-auto pr-0.5">
             {units.map((u, idx) => (
-              <div key={u.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/4 border border-white/8 group">
-                <span className="text-gray-500 text-xs font-mono w-5 flex-shrink-0">{idx + 1}.</span>
-                <div className={`flex-shrink-0 ${u.valid ? "text-green-400" : "text-red-400"}`}>
+              <div
+                key={u.id}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white/4 border border-white/8 group"
+              >
+                <span className="text-gray-500 text-xs font-mono w-5 flex-shrink-0">
+                  {idx + 1}.
+                </span>
+                <div
+                  className={`flex-shrink-0 ${u.valid ? "text-green-400" : "text-red-400"}`}
+                >
                   {u.valid ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-mono text-sm tracking-wider">{formatIMEI(u.imei)}</p>
-                  {u.imei2 && <p className="text-gray-500 font-mono text-xs">SIM2: {formatIMEI(u.imei2)}</p>}
-                  <p className="text-gray-600 text-[10px] mt-0.5">{u.addedAt}</p>
+                  <p className="text-white font-mono text-sm tracking-wider">
+                    {formatIMEI(u.imei)}
+                  </p>
+                  {u.imei2 && (
+                    <p className="text-gray-500 font-mono text-xs">
+                      SIM2: {formatIMEI(u.imei2)}
+                    </p>
+                  )}
+                  <p className="text-gray-600 text-[10px] mt-0.5">
+                    {u.addedAt}
+                  </p>
                 </div>
-                {!u.valid && <Badge variant="red" size="sm">Invalid</Badge>}
+                {!u.valid && (
+                  <Badge variant="red" size="sm">
+                    Invalid
+                  </Badge>
+                )}
                 <button
                   onClick={() => onRemove(u.id)}
                   className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-all cursor-pointer opacity-0 group-hover:opacity-100"
@@ -499,7 +679,11 @@ function UnitScanner({
       {units.length === 0 && (
         <div className="flex flex-col items-center justify-center py-8 gap-3 text-center">
           <ScanBarcode size={36} className="text-gray-700" />
-          <p className="text-gray-500 text-sm">No units added yet.<br />Scan or enter IMEI for each phone.</p>
+          <p className="text-gray-500 text-sm">
+            No units added yet.
+            <br />
+            Scan or enter IMEI for each phone.
+          </p>
         </div>
       )}
     </div>
@@ -516,24 +700,33 @@ interface Props {
 }
 
 export function DeviceDetailsModal({ open, onClose, onSave }: Props) {
-  const [tab,     setTab]     = useState<TabId>("basic");
-  const [tmpl,    setTmpl]    = useState<DeviceTemplate>(defaultTemplate);
-  const [units,   setUnits]   = useState<ScannedUnit[]>([]);
-  const [errors,  setErrors]  = useState<Record<string, string>>({});
+  const [tab, setTab] = useState<TabId>("basic");
+  const [tmpl, setTmpl] = useState<DeviceTemplate>(defaultTemplate);
+  const [units, setUnits] = useState<ScannedUnit[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const set = <K extends keyof DeviceTemplate>(key: K, val: DeviceTemplate[K]) =>
-    setTmpl(prev => ({ ...prev, [key]: val }));
+  const set = <K extends keyof DeviceTemplate>(
+    key: K,
+    val: DeviceTemplate[K],
+  ) => setTmpl((prev) => ({ ...prev, [key]: val }));
 
   // ── Validation ──────────────────────────────────────────────────
   const validate = (): boolean => {
     const e: Record<string, string> = {};
-    if (!tmpl.brand)               e.brand         = "Brand is required";
-    if (!tmpl.model)               e.model         = "Model is required";
-    if (tmpl.purchasePrice <= 0)   e.purchasePrice = "Enter a valid purchase price";
-    if (tmpl.sellingPrice  <= 0)   e.sellingPrice  = "Enter a valid selling price";
+    if (!tmpl.brand) e.brand = "Brand is required";
+    if (!tmpl.model) e.model = "Model is required";
+    if (tmpl.purchasePrice <= 0)
+      e.purchasePrice = "Enter a valid purchase price";
+    if (tmpl.sellingPrice <= 0) e.sellingPrice = "Enter a valid selling price";
     setErrors(e);
-    if (e.brand || e.model)        { setTab("basic");   return false; }
-    if (e.purchasePrice || e.sellingPrice) { setTab("pricing"); return false; }
+    if (e.brand || e.model) {
+      setTab("basic");
+      return false;
+    }
+    if (e.purchasePrice || e.sellingPrice) {
+      setTab("pricing");
+      return false;
+    }
     return true;
   };
 
@@ -545,14 +738,14 @@ export function DeviceDetailsModal({ open, onClose, onSave }: Props) {
       return;
     }
     // Fire onSave once per unit — each with its own IMEI
-    units.forEach(unit => {
+    units.forEach((unit) => {
       onSave({
         ...tmpl,
-        imei1:        unit.imei,
-        imei2:        unit.imei2,
-        tacCode:      unit.imei.slice(0, 8),
+        imei1: unit.imei,
+        imei2: unit.imei2,
+        tacCode: unit.imei.slice(0, 8),
         serialNumber: unit.imei.slice(8, 14),
-        quantity:     1,
+        quantity: 1,
       });
     });
     handleClose();
@@ -566,106 +759,240 @@ export function DeviceDetailsModal({ open, onClose, onSave }: Props) {
     onClose();
   };
 
-  const profit  = tmpl.sellingPrice - tmpl.purchasePrice;
-  const margin  = tmpl.purchasePrice > 0
-    ? ((profit / tmpl.purchasePrice) * 100).toFixed(1)
-    : "0";
+  const profit = tmpl.sellingPrice - tmpl.purchasePrice;
+  const margin =
+    tmpl.purchasePrice > 0
+      ? ((profit / tmpl.purchasePrice) * 100).toFixed(1)
+      : "0";
 
   const tabErrors: Record<TabId, number> = {
-    basic:       (errors.brand ? 1 : 0) + (errors.model ? 1 : 0),
-    condition:   0,
-    pricing:     (errors.purchasePrice ? 1 : 0) + (errors.sellingPrice ? 1 : 0),
-    inventory:   0,
+    basic: (errors.brand ? 1 : 0) + (errors.model ? 1 : 0),
+    condition: 0,
+    pricing: (errors.purchasePrice ? 1 : 0) + (errors.sellingPrice ? 1 : 0),
+    inventory: 0,
     accessories: 0,
-    media:       0,
-    units:       units.filter(u => !u.valid).length,
+    media: 0,
+    units: units.filter((u) => !u.valid).length,
   };
 
   // ── Tab panels ──────────────────────────────────────────────────
   const panels: Record<TabId, React.ReactNode> = {
-
     basic: (
       <div className="space-y-4">
         <div className="grid grid-cols-3 gap-4">
-          <Select label="Brand" required options={BRANDS} placeholder="Select brand"
-            value={tmpl.brand} error={errors.brand} onChange={e => { set("brand", e.target.value); }} />
-          <Input label="Model" required placeholder="Galaxy S25 Ultra"
-            value={tmpl.model} error={errors.model} onChange={e => set("model", e.target.value)} />
-          <Input label="Variant (RAM / Storage)" placeholder="12GB / 512GB"
-            value={tmpl.variant} onChange={e => set("variant", e.target.value)} />
+          <Select
+            label="Brand"
+            required
+            options={BRANDS}
+            placeholder="Select brand"
+            value={tmpl.brand}
+            error={errors.brand}
+            onChange={(e) => {
+              set("brand", e.target.value);
+            }}
+          />
+          <Input
+            label="Model"
+            required
+            placeholder="Galaxy S25 Ultra"
+            helper="Mobile Model"
+            value={tmpl.model}
+            error={errors.model}
+            onChange={(e) => set("model", e.target.value)}
+          />
+          <Input
+            label="Variant (RAM / Storage)"
+            placeholder="12GB / 512GB"
+            helper="Variant"
+            value={tmpl.variant}
+            onChange={(e) => set("variant", e.target.value)}
+          />
         </div>
         <div className="grid grid-cols-3 gap-4">
-          <Input label="Color" placeholder="Phantom Black"
-            value={tmpl.color} onChange={e => set("color", e.target.value)} />
-          <Select label="Country Version" options={COUNTRY_OPTS} placeholder="Select"
-            value={tmpl.countryVersion} onChange={e => set("countryVersion", e.target.value)} />
-          <Select label="Network Lock" options={NETWORK_OPTS}
-            value={tmpl.networkLockStatus} onChange={e => set("networkLockStatus", e.target.value as NetworkLockStatus)} />
+          <Input
+            label="Color"
+            placeholder="Phantom Black"
+            helper="Device Color"
+            value={tmpl.color}
+            onChange={(e) => set("color", e.target.value)}
+          />
+          <Select
+            label="Country Version"
+            options={COUNTRY_OPTS}
+            placeholder="Select"
+            value={tmpl.countryVersion}
+            onChange={(e) => set("countryVersion", e.target.value)}
+          />
+          <Select
+            label="Network Lock"
+            options={NETWORK_OPTS}
+            value={tmpl.networkLockStatus}
+            onChange={(e) =>
+              set("networkLockStatus", e.target.value as NetworkLockStatus)
+            }
+          />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Select label="PTA Status" options={PTA_OPTS}
-            value={tmpl.ptaStatus} onChange={e => set("ptaStatus", e.target.value as PTAStatus)} />
-          <Select label="Condition" options={CONDITION_OPTS}
-            value={tmpl.condition} onChange={e => set("condition", e.target.value as DeviceCondition)} />
+          <Select
+            label="PTA Status"
+            options={PTA_OPTS}
+            value={tmpl.ptaStatus}
+            onChange={(e) => set("ptaStatus", e.target.value as PTAStatus)}
+          />
+          <Select
+            label="Condition"
+            options={CONDITION_OPTS}
+            value={tmpl.condition}
+            onChange={(e) =>
+              set("condition", e.target.value as DeviceCondition)
+            }
+          />
         </div>
       </div>
     ),
 
     condition: (
       <div className="space-y-5">
-        <RangeSlider label="Battery Health" value={tmpl.batteryHealth}
-          onChange={v => set("batteryHealth", v)} unit="%" />
+        <RangeSlider
+          label="Battery Health"
+          value={tmpl.batteryHealth}
+          onChange={(v) => set("batteryHealth", v)}
+          unit="%"
+        />
         <div className="grid grid-cols-2 gap-4">
-          <Select label="Screen"        options={SCREEN_OPTS}  value={tmpl.screenCondition}   onChange={e => set("screenCondition",   e.target.value)} />
-          <Select label="Camera"        options={SCREEN_OPTS}  value={tmpl.cameraCondition}   onChange={e => set("cameraCondition",   e.target.value)} />
-          <Select label="Speaker"       options={SPEAKER_OPTS} value={tmpl.speakerCondition}  onChange={e => set("speakerCondition",  e.target.value)} />
-          <Select label="Charging Port" options={SPEAKER_OPTS} value={tmpl.chargingCondition} onChange={e => set("chargingCondition", e.target.value)} />
-          <Select label="Face ID"       options={FACEID_OPTS}  value={tmpl.faceIdStatus}      onChange={e => set("faceIdStatus",      e.target.value)} />
-          <Select label="Fingerprint"   options={FACEID_OPTS}  value={tmpl.fingerprintStatus} onChange={e => set("fingerprintStatus", e.target.value)} />
+          <Select
+            label="Screen"
+            options={SCREEN_OPTS}
+            value={tmpl.screenCondition}
+            onChange={(e) => set("screenCondition", e.target.value)}
+          />
+          <Select
+            label="Camera"
+            options={SCREEN_OPTS}
+            value={tmpl.cameraCondition}
+            onChange={(e) => set("cameraCondition", e.target.value)}
+          />
+          <Select
+            label="Speaker"
+            options={SPEAKER_OPTS}
+            value={tmpl.speakerCondition}
+            onChange={(e) => set("speakerCondition", e.target.value)}
+          />
+          <Select
+            label="Charging Port"
+            options={SPEAKER_OPTS}
+            value={tmpl.chargingCondition}
+            onChange={(e) => set("chargingCondition", e.target.value)}
+          />
+          <Select
+            label="Face ID"
+            options={FACEID_OPTS}
+            value={tmpl.faceIdStatus}
+            onChange={(e) => set("faceIdStatus", e.target.value)}
+          />
+          <Select
+            label="Fingerprint"
+            options={FACEID_OPTS}
+            value={tmpl.fingerprintStatus}
+            onChange={(e) => set("fingerprintStatus", e.target.value)}
+          />
         </div>
-        <Select label="Waterproof / Waterpak" options={WATERPAK_OPTS}
-          value={tmpl.waterpakStatus} onChange={e => set("waterpakStatus", e.target.value)} />
+        <Select
+          label="Waterproof / Waterpak"
+          options={WATERPAK_OPTS}
+          value={tmpl.waterpakStatus}
+          onChange={(e) => set("waterpakStatus", e.target.value)}
+        />
       </div>
     ),
 
     pricing: (
       <div className="space-y-4">
         <div className="grid grid-cols-3 gap-4">
-          <Input label="Purchase Price" required type="number" prefix="₨" placeholder="0"
-            value={tmpl.purchasePrice || ""} error={errors.purchasePrice}
-            onChange={e => set("purchasePrice", parseFloat(e.target.value) || 0)} />
-          <Input label="Selling Price" required type="number" prefix="₨" placeholder="0"
-            value={tmpl.sellingPrice || ""} error={errors.sellingPrice}
-            onChange={e => set("sellingPrice", parseFloat(e.target.value) || 0)} />
-          <Input label="Warranty (Days)" type="number" placeholder="0"
-            value={tmpl.warrantyDays || ""} onChange={e => set("warrantyDays", parseInt(e.target.value) || 0)} />
+          <Input
+            label="Purchase Price"
+            required
+            type="number"
+            prefix="₨"
+            placeholder="0"
+            helper="Purchase Price"
+            value={tmpl.purchasePrice || ""}
+            error={errors.purchasePrice}
+            onChange={(e) =>
+              set("purchasePrice", parseFloat(e.target.value) || 0)
+            }
+          />
+          <Input
+            label="Selling Price"
+            required
+            type="number"
+            prefix="₨"
+            placeholder="0"
+            helper="Selling Price"
+            value={tmpl.sellingPrice || ""}
+            error={errors.sellingPrice}
+            onChange={(e) =>
+              set("sellingPrice", parseFloat(e.target.value) || 0)
+            }
+          />
+          <Input
+            label="Warranty (Days)"
+            type="number"
+            placeholder="0"
+            helper="Warranty period in days"
+            value={tmpl.warrantyDays || ""}
+            onChange={(e) => set("warrantyDays", parseInt(e.target.value) || 0)}
+          />
         </div>
         <div className="grid grid-cols-3 gap-4">
-          <Input label="Supplier Name" placeholder="Ali Traders"
-            value={tmpl.supplierName} onChange={e => set("supplierName", e.target.value)} />
-          <Input label="Purchase Date" type="date"
-            value={tmpl.purchaseDate} onChange={e => set("purchaseDate", e.target.value)} />
-          <Input label="Invoice Number" placeholder="INV-001"
-            value={tmpl.invoiceNumber} onChange={e => set("invoiceNumber", e.target.value)} />
+          <Input
+            label="Supplier Name"
+            placeholder="Ali Traders"
+            helper="Name of the supplier"
+            value={tmpl.supplierName}
+            onChange={(e) => set("supplierName", e.target.value)}
+          />
+          <Input
+            label="Purchase Date"
+            type="date"
+            helper="Date of purchase"
+            value={tmpl.purchaseDate}
+            onChange={(e) => set("purchaseDate", e.target.value)}
+          />
+          <Input
+            label="Invoice Number"
+            placeholder="INV-001"
+            helper="Invoice number"
+            value={tmpl.invoiceNumber}
+            onChange={(e) => set("invoiceNumber", e.target.value)}
+          />
         </div>
         {tmpl.purchasePrice > 0 && tmpl.sellingPrice > 0 && (
           <div className="p-4 rounded-2xl bg-green-600/10 border border-green-500/20">
-            <p className="text-green-400 text-xs font-bold uppercase tracking-wider mb-3">Profit per Unit</p>
+            <p className="text-green-400 text-xs font-bold uppercase tracking-wider mb-3">
+              Profit per Unit
+            </p>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <p className="text-gray-400 text-xs">Profit</p>
-                <p className={`font-black text-lg ${profit >= 0 ? "text-green-400" : "text-red-400"}`}>
+                <p
+                  className={`font-black text-lg ${profit >= 0 ? "text-green-400" : "text-red-400"}`}
+                >
                   ₨{profit.toLocaleString()}
                 </p>
               </div>
               <div>
                 <p className="text-gray-400 text-xs">Margin</p>
-                <p className={`font-black text-lg ${Number(margin) >= 0 ? "text-green-400" : "text-red-400"}`}>
+                <p
+                  className={`font-black text-lg ${Number(margin) >= 0 ? "text-green-400" : "text-red-400"}`}
+                >
                   {margin}%
                 </p>
               </div>
               <div>
-                <p className="text-gray-400 text-xs">Est. Total ({units.length} units)</p>
+                <p className="text-gray-400 text-xs">
+                  Est. Total ({units.length} units)
+                </p>
                 <p className="text-white font-black text-lg">
                   ₨{(profit * Math.max(units.length, 1)).toLocaleString()}
                 </p>
@@ -678,24 +1005,47 @@ export function DeviceDetailsModal({ open, onClose, onSave }: Props) {
 
     inventory: (
       <div className="space-y-4">
-        <Select label="Stock Status" options={STOCK_OPTS}
-          value={tmpl.stockStatus} onChange={e => set("stockStatus", e.target.value as StockStatus)} />
-        <Input label="Shelf / Rack Location" placeholder="Rack A1, Shelf B3"
-          value={tmpl.shelfLocation} onChange={e => set("shelfLocation", e.target.value)} />
-        <Textarea label="Notes" placeholder="Any notes about this model..."
-          rows={4} value={tmpl.notes} onChange={e => set("notes", e.target.value)} />
+        <Select
+          label="Stock Status"
+          options={STOCK_OPTS}
+          value={tmpl.stockStatus}
+          onChange={(e) => set("stockStatus", e.target.value as StockStatus)}
+        />
+        <Input
+          label="Shelf / Rack Location"
+          placeholder="Rack A1, Shelf B3"
+          helper="Shelf / Rack Location"
+          value={tmpl.shelfLocation}
+          onChange={(e) => set("shelfLocation", e.target.value)}
+        />
+        <Textarea
+          label="Notes"
+          placeholder="Any notes about this model..."
+          rows={4}
+          value={tmpl.notes}
+          onChange={(e) => set("notes", e.target.value)}
+        />
       </div>
     ),
 
     accessories: (
       <div className="space-y-2">
-        <p className="text-gray-400 text-sm mb-3">Select accessories included with every unit of this model.</p>
-        {(Object.keys(tmpl.accessories) as (keyof typeof tmpl.accessories)[]).map(key => (
+        <p className="text-gray-400 text-sm mb-3">
+          Select accessories included with every unit of this model.
+        </p>
+        {(
+          Object.keys(tmpl.accessories) as (keyof typeof tmpl.accessories)[]
+        ).map((key) => (
           <Checkbox
             key={key}
             label={ACCESSORY_LABELS[key] ?? key}
             checked={tmpl.accessories[key]}
-            onChange={e => set("accessories", { ...tmpl.accessories, [key]: e.target.checked })}
+            onChange={(e) =>
+              set("accessories", {
+                ...tmpl.accessories,
+                [key]: e.target.checked,
+              })
+            }
           />
         ))}
       </div>
@@ -703,14 +1053,25 @@ export function DeviceDetailsModal({ open, onClose, onSave }: Props) {
 
     media: (
       <div className="space-y-4">
-        <p className="text-gray-400 text-sm">Upload photos for this device model. These will apply to all units.</p>
+        <p className="text-gray-400 text-sm">
+          Upload photos for this device model. These will apply to all units.
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <ImageUploader label="Front" preview={tmpl.images.front}
-            onSelect={b64 => set("images", { ...tmpl.images, front: b64 })} />
-          <ImageUploader label="Back" preview={tmpl.images.back}
-            onSelect={b64 => set("images", { ...tmpl.images, back: b64 })} />
-          <ImageUploader label="Invoice / Receipt" preview={tmpl.images.invoice}
-            onSelect={b64 => set("images", { ...tmpl.images, invoice: b64 })} />
+          <ImageUploader
+            label="Front"
+            preview={tmpl.images.front}
+            onSelect={(b64) => set("images", { ...tmpl.images, front: b64 })}
+          />
+          <ImageUploader
+            label="Back"
+            preview={tmpl.images.back}
+            onSelect={(b64) => set("images", { ...tmpl.images, back: b64 })}
+          />
+          <ImageUploader
+            label="Invoice / Receipt"
+            preview={tmpl.images.invoice}
+            onSelect={(b64) => set("images", { ...tmpl.images, invoice: b64 })}
+          />
         </div>
       </div>
     ),
@@ -718,24 +1079,28 @@ export function DeviceDetailsModal({ open, onClose, onSave }: Props) {
     units: (
       <UnitScanner
         units={units}
-        onAdd={unit => setUnits(prev => [...prev, unit])}
-        onRemove={id => setUnits(prev => prev.filter(u => u.id !== id))}
+        onAdd={(unit) => setUnits((prev) => [...prev, unit])}
+        onRemove={(id) => setUnits((prev) => prev.filter((u) => u.id !== id))}
         templateBrand={tmpl.brand || "device"}
       />
     ),
   };
 
   // ── Navigation helpers ──────────────────────────────────────────
-  const tabIdx  = TABS.findIndex(t => t.id === tab);
-  const prevTab = tabIdx > 0               ? TABS[tabIdx - 1].id : null;
+  const tabIdx = TABS.findIndex((t) => t.id === tab);
+  const prevTab = tabIdx > 0 ? TABS[tabIdx - 1].id : null;
   const nextTab = tabIdx < TABS.length - 1 ? TABS[tabIdx + 1].id : null;
-  const isLast  = tab === "units";
+  const isLast = tab === "units";
 
   return (
     <Modal
       open={open}
       onClose={handleClose}
-      title={tab === "units" ? `Add Units — ${tmpl.brand || "Device"} ${tmpl.model || ""}`.trim() : "Add Device to Inventory"}
+      title={
+        tab === "units"
+          ? `Add Units — ${tmpl.brand || "Device"} ${tmpl.model || ""}`.trim()
+          : "Add Device to Inventory"
+      }
       subtitle={
         tab === "units"
           ? "Scan or enter IMEI for each physical unit"
@@ -745,7 +1110,7 @@ export function DeviceDetailsModal({ open, onClose, onSave }: Props) {
     >
       {/* ── Tab bar ── */}
       <div className="flex gap-1 overflow-x-auto pb-3 border-b border-white/8 -mx-1 px-1 mb-4">
-        {TABS.map(t => (
+        {TABS.map((t) => (
           <button
             key={t.id}
             type="button"
@@ -784,13 +1149,15 @@ export function DeviceDetailsModal({ open, onClose, onSave }: Props) {
       <Modal.Footer align="between">
         {/* Progress dots */}
         <div className="flex items-center gap-1.5">
-          {TABS.map(t => (
+          {TABS.map((t) => (
             <div
               key={t.id}
               onClick={() => setTab(t.id)}
               className={[
                 "h-1 rounded-full transition-all duration-300 cursor-pointer",
-                tab === t.id ? "w-5 bg-yellow-400" : "w-1.5 bg-white/15 hover:bg-white/30",
+                tab === t.id
+                  ? "w-5 bg-yellow-400"
+                  : "w-1.5 bg-white/15 hover:bg-white/30",
               ].join(" ")}
             />
           ))}
@@ -802,19 +1169,29 @@ export function DeviceDetailsModal({ open, onClose, onSave }: Props) {
           </Button>
 
           {prevTab && (
-            <Button variant="dark" size="sm" type="button" onClick={() => setTab(prevTab)}>
+            <Button
+              variant="dark"
+              size="sm"
+              type="button"
+              onClick={() => setTab(prevTab)}
+            >
               Back
             </Button>
           )}
 
           {!isLast && (
-            <Button variant="secondary" size="sm" type="button" onClick={() => {
-              if (tab === "basic" && (!tmpl.brand || !tmpl.model)) {
-                validate();
-                return;
-              }
-              if (nextTab) setTab(nextTab);
-            }}>
+            <Button
+              variant="secondary"
+              size="sm"
+              type="button"
+              onClick={() => {
+                if (tab === "basic" && (!tmpl.brand || !tmpl.model)) {
+                  validate();
+                  return;
+                }
+                if (nextTab) setTab(nextTab);
+              }}
+            >
               Next
             </Button>
           )}

@@ -75,6 +75,7 @@ const SignupPage = () => {
                   <Input
                     label="Full Name"
                     type="text"
+                    helper="Full Name"
                     placeholder="Basit Khan"
                     value={form.fullName}
                     onChange={set("fullName")}
@@ -85,6 +86,7 @@ const SignupPage = () => {
                   <Input
                     label="Email Address"
                     type="email"
+                    helper="Email Address"
                     placeholder="you@example.com"
                     value={form.email}
                     onChange={set("email")}
@@ -95,6 +97,7 @@ const SignupPage = () => {
                   <Input
                     label="Phone Number"
                     type="tel"
+                    helper="Phone Number"
                     placeholder="0300-1234567"
                     value={form.phone}
                     onChange={set("phone")}
@@ -106,6 +109,7 @@ const SignupPage = () => {
                     label="Password"
                     type="password"
                     placeholder="••••••••"
+                    helper="Password"
                     value={form.password}
                     onChange={set("password")}
                     prefix="🔒"
@@ -116,6 +120,7 @@ const SignupPage = () => {
                   <Input
                     label="Confirm Password"
                     type="password"
+                    helper="Confirm Password"
                     placeholder="••••••••"
                     value={form.confirm}
                     onChange={set("confirm")}

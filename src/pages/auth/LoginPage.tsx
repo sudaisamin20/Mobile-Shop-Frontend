@@ -123,6 +123,7 @@ const LoginPage = () => {
                   <Input
                     label="Email Address"
                     type="email"
+                    helper="Email Address"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -135,6 +136,7 @@ const LoginPage = () => {
                   <Input
                     label="Password"
                     type="password"
+                    helper="Password"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

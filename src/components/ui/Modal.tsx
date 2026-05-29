@@ -15,7 +15,7 @@
 // ─────────────────────────────────────────────
 
 "use client";
-import { ReactNode, useEffect } from "react";
+import { type ReactNode, useEffect } from "react";
 import { X } from "lucide-react";
 
 interface ModalProps {

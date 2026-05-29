@@ -330,6 +330,7 @@ export const AddStockModal = ({
                     handleManualAdd();
                   }
                 }}
+                helper="Enter a valid 15-digit IMEI number and press Enter"
               />
               <Button
                 variant="secondary"
