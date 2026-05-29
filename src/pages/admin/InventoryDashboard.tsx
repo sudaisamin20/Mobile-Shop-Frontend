@@ -32,6 +32,8 @@ export function InventoryDashboard() {
   const [showAddStockModal, setShowAddStockModal] = useState(false);
   const [templateDevice, setTemplateDevice] = useState<IDevice | null>(null);
   const [viewingDevice, setViewingDevice] = useState<IDevice | null>(null);
+  const [selectedDevice, setSelectedDevice] = useState<IDevice | null>(null);
+  console.log(selectedDevice)
 
   // ── Handle Add Device Template ────────
   const handleAddDevice = (deviceData: ICreateDeviceRequest) => {
@@ -48,7 +50,7 @@ export function InventoryDashboard() {
 
     // Create a device for each scanned IMEI
     scannedIMEIs.forEach((scan) => {
-      const deviceData: ICreateDeviceRequest = {
+      const deviceData = {
         brand: templateDevice.brand,
         model: templateDevice.model,
         variant: templateDevice.variant,
@@ -73,7 +75,7 @@ export function InventoryDashboard() {
         accessories: templateDevice.accessories,
         images: templateDevice.images,
       };
-      addDevice(deviceData);
+      addDevice(deviceData as ICreateDeviceRequest);
     });
 
     // Reset and close modal
@@ -96,12 +98,10 @@ export function InventoryDashboard() {
   };
 
   // ── Profit Trend ───────────────────────
-  const yesterdayProfit = stats.totalProfit * 0.85; // Mock data
-  const profitTrend = stats.totalProfit > yesterdayProfit ? true : false;
-  const profitChange = Math.abs(
-    (((stats.totalProfit - yesterdayProfit) / yesterdayProfit) * 100).toFixed(
-      1,
-    ),
+  const yesterdayProfit: number = stats.totalProfit * 0.85; // Mock data
+  const profitTrend: boolean = stats.totalProfit > yesterdayProfit ? true : false;
+  const profitChange: number = Math.abs(
+    (((stats.totalProfit - yesterdayProfit) / yesterdayProfit) * 100)
   );
 
   return (
@@ -300,7 +300,7 @@ export function InventoryDashboard() {
             setShowDeviceModal(false);
             setSelectedDevice(null);
           }}
-          onSave={handleAddDevice}
+          onSave={() => handleAddDevice(selectedDevice as ICreateDeviceRequest)}
         />
 
         {/* Add Stock Modal */}

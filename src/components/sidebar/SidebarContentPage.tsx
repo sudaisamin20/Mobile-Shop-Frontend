@@ -7,7 +7,7 @@ import { Sidebar } from "./Sidebar";
 import { SidebarConfig } from "./SidebarConfig";
 import { PageBackground, Avatar } from "../ui";
 import { Bell, Search, Menu, X } from "lucide-react";
-import { useAppSelector } from "../../app/index";
+// import { useAppSelector } from "../../app/index";
 
 const SidebarContentPage = () => {
   const location = useLocation();

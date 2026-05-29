@@ -39,12 +39,15 @@ function FieldWrapper({ label, error, hint, required, children, className = "" }
 
 // ── Input ────────────────────────────────────
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'suffix'> {
   label?: string;
   error?: string;
+  icon?: ReactNode;
   hint?: string;
   prefix?: ReactNode;   // e.g. "PKR" or icon on the left
   suffix?: ReactNode;   // e.g. icon on the right
+  helper: string;
+  isLoading?: boolean;
 }
 
 export function Input({ label, error, hint, prefix, suffix, required, className = "", ...props }: InputProps) {

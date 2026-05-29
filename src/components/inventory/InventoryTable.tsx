@@ -7,6 +7,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import { Button, StatusBadge, EmptyState, SkeletonRow } from "../ui";
 import type { IDevice, IInventoryFilters } from "../../interfaces/inventory";
@@ -40,6 +42,18 @@ export function InventoryTable({
 }: InventoryTableProps) {
   const [showFilters, setShowFilters] = useState(false);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpand = (id: string) => {
+    setExpandedIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
 
   const totalPages = Math.ceil(total / itemsPerPage);
 
@@ -91,7 +105,7 @@ export function InventoryTable({
                     onFilterChange({
                       ...filters,
                       condition: Array.from(e.target.selectedOptions).map(
-                        (o) => o.value as any
+                        (o) => o.value as any,
                       ),
                     })
                   }
@@ -115,7 +129,7 @@ export function InventoryTable({
                     onFilterChange({
                       ...filters,
                       stockStatus: Array.from(e.target.selectedOptions).map(
-                        (o) => o.value as any
+                        (o) => o.value as any,
                       ),
                     })
                   }
@@ -139,7 +153,7 @@ export function InventoryTable({
                     onFilterChange({
                       ...filters,
                       ptaStatus: Array.from(e.target.selectedOptions).map(
-                        (o) => o.value as any
+                        (o) => o.value as any,
                       ),
                     })
                   }
@@ -163,7 +177,7 @@ export function InventoryTable({
                     onFilterChange({
                       ...filters,
                       brand: Array.from(e.target.selectedOptions).map(
-                        (o) => o.value
+                        (o) => o.value,
                       ),
                     })
                   }
@@ -330,6 +344,19 @@ export function InventoryTable({
                         >
                           <Trash2 size={14} />
                         </button>
+                        <button
+                          onClick={() => toggleExpand(device.id)}
+                          className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:bg-white/10 transition-colors"
+                          title={
+                            expandedIds.has(device.id) ? "Collapse" : "Expand"
+                          }
+                        >
+                          {expandedIds.has(device.id) ? (
+                            <ChevronUp size={14} />
+                          ) : (
+                            <ChevronDown size={14} />
+                          )}
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -394,7 +421,7 @@ export function InventoryTable({
       {totalPages > 1 && (
         <div className="flex items-center justify-between p-4 rounded-2xl bg-white/4 border border-white/10">
           <p className="text-sm text-gray-400">
-            Showing {((currentPage - 1) * itemsPerPage) + 1} -{" "}
+            Showing {(currentPage - 1) * itemsPerPage + 1} -{" "}
             {Math.min(currentPage * itemsPerPage, total)} of {total} devices
           </p>
 

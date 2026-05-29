@@ -125,9 +125,7 @@ export function useInventory() {
 
     // PTA status filter
     if (filters.ptaStatus && filters.ptaStatus.length > 0) {
-      result = result.filter((d) =>
-        filters.ptaStatus!.includes(d.ptaStatus),
-      );
+      result = result.filter((d) => filters.ptaStatus!.includes(d.ptaStatus));
     }
 
     // Price range filter
@@ -173,7 +171,7 @@ export function useInventory() {
   }, [sortedDevices, pagination.page, pagination.limit]);
 
   // ── Calculate Statistics ──────────────────
-  const stats = useMemo((): IDashboardStats => {
+  const stats: IDashboardStats = useMemo((): IDashboardStats => {
     const totalDevices = devices.length;
     const availableDevices = devices.filter(
       (d) => d.stockStatus === "available",
@@ -190,11 +188,11 @@ export function useInventory() {
       (sum, d) => sum + d.sellingPrice * d.quantity,
       0,
     );
-    const totalProfit = totalSellingValue - totalPurchaseValue;
+    const totalProfit: number = totalSellingValue - totalPurchaseValue;
 
-    const avgMargin =
+    const avgMargin: number =
       totalPurchaseValue > 0
-        ? ((totalProfit / totalPurchaseValue) * 100).toFixed(2)
+        ? ((totalProfit / totalPurchaseValue) * 100)
         : 0;
 
     return {
@@ -210,7 +208,7 @@ export function useInventory() {
   }, [devices]);
 
   // ── Get Inventory Summary ─────────────────
-  const summary = useMemo((): IInventorySummary => {
+  const summary: IInventorySummary = useMemo((): IInventorySummary => {
     const byCondition: Record<string, number> = {};
     const byBrand: Record<string, number> = {};
     const byStockStatus: Record<string, number> = {};
