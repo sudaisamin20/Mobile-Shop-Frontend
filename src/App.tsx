@@ -4,7 +4,6 @@ import { LoginPage, SignupPage } from "./pages/auth";
 import {
   CustomersPage,
   Dashboard,
-  IMEIScanner,
   InventoryPage,
   OrdersPage,
   PhonesPage,
@@ -48,13 +47,11 @@ function App() {
         {/* Protected Routes - Require Admin Role */}
         <Route path="/admin" element={<SidebarContentPage />}>
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="imei-scanner" element={<IMEIScanner />} />
           <Route path="phones" element={<PhonesPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="inventory" element={<InventoryPage />} />
           <Route path="customers" element={<CustomersPage />} />
           <Route path="repairs" element={<RepairsPage />} />
-          <Route path="imei-scanner" element={<IMEIScanner />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="staff" element={<StaffPage />} />
           <Route path="settings" element={<SettingsPage />} />

@@ -32,11 +32,10 @@ import {
 // BMZ UI Components
 import {
   PageBackground,
-  Avatar,
   useToast,
   ToastContainer,
 } from "../../components/ui/Misc";
-import { Button, Badge, Card, Input, Modal, AnimateIn } from "../../components/ui";
+import { Button, Badge, Card, Input, AnimateIn } from "../../components/ui";
 import { DeviceDetailsModal } from "../../components/inventory";
 import { Layout } from "../../layout";
 import { useInventory } from "../../hooks/useInventory";

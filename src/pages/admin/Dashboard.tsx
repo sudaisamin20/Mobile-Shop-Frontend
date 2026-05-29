@@ -6,26 +6,16 @@
 "use client";
 import { useState } from "react";
 import {
-  LayoutDashboard,
-  Smartphone,
   ShoppingBag,
-  Users,
   Wrench,
-  Settings,
-  Bell,
-  Search,
   Plus,
   Pencil,
   Trash2,
   FileBarChart,
-  Menu,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 
 import {
   PageBackground,
-  Avatar,
   Tabs,
   useToast,
   ToastContainer,
@@ -35,11 +25,8 @@ import { Badge } from "../../components/ui/Badge";
 import { Card } from "../../components/ui/Card";
 import { StatCard } from "../../components/ui/StatCard";
 import { Table } from "../../components/ui/Table";
-import { Modal } from "../../components/ui/Modal";
-import { Input, Select, Textarea } from "../../components/ui/Input";
 import { AnimateIn } from "../../components/ui/Section";
 import { DeviceDetailsModal } from "../../components/inventory";
-import { MobileSidebarOverlay } from "../../components/sidebar/Sidebar";
 
 // ── Nav definition ────────────────────────────
 
@@ -178,9 +165,6 @@ const stockBadge = (s: Phone["stockStatus"], stock: number) => {
 // ── Dashboard ─────────────────────────────────
 
 const Dashboard = () => {
-  const [activeNav, setActiveNav] = useState("dashboard");
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [orderTab, setOrderTab] = useState("all");
   const [showDeviceModal, setShowDeviceModal] = useState(false);
   const { toasts, addToast } = useToast();

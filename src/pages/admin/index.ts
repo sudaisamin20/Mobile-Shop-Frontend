@@ -1,5 +1,4 @@
 export { default as Dashboard } from './Dashboard'
-export { default as IMEIScanner } from './IMEIScanner'
 export { default as InventoryDashboard } from './InventoryDashboard'
 export { default as PhonesPage } from './PhonesPage'
 export { default as OrdersPage } from './OrdersPage'

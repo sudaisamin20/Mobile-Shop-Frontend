@@ -6,7 +6,6 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
   Eye,
 } from "lucide-react";
 import { Button, StatusBadge, EmptyState, SkeletonRow } from "../ui";
@@ -43,16 +42,6 @@ export function InventoryTable({
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   const totalPages = Math.ceil(total / itemsPerPage);
-
-  const toggleRow = (id: string) => {
-    const updated = new Set(expandedIds);
-    if (updated.has(id)) {
-      updated.delete(id);
-    } else {
-      updated.add(id);
-    }
-    setExpandedIds(updated);
-  };
 
   return (
     <div className="space-y-4">

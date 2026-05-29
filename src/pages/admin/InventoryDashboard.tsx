@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Package,
   TrendingUp,
@@ -6,12 +6,14 @@ import {
   AlertTriangle,
   Plus,
   Smartphone,
+  ScanBarcode,
 } from "lucide-react";
 import { Layout } from "../../layout";
 import { Button, Card, StatsCard, PageBackground } from "../../components/ui";
-import { DeviceDetailsModal, InventoryTable } from "../../components/inventory";
+import { DeviceDetailsModal, InventoryTable, AddStockModal } from "../../components/inventory";
 import { useInventory } from "../../hooks/useInventory";
 import type { IDevice, ICreateDeviceRequest } from "../../interfaces/inventory";
+import type { ScannedIMEI } from "../../components/inventory/AddStockModal";
 
 export function InventoryDashboard() {
   const {
@@ -21,21 +23,62 @@ export function InventoryDashboard() {
     stats,
     summary,
     addDevice,
-    updateDevice,
     deleteDevice,
     setFilters,
     setPagination,
   } = useInventory();
 
   const [showDeviceModal, setShowDeviceModal] = useState(false);
-  const [selectedDevice, setSelectedDevice] = useState<IDevice | null>(null);
+  const [showAddStockModal, setShowAddStockModal] = useState(false);
+  const [templateDevice, setTemplateDevice] = useState<IDevice | null>(null);
   const [viewingDevice, setViewingDevice] = useState<IDevice | null>(null);
 
-  // ── Handle Add Device ──────────────────
+  // ── Handle Add Device Template ────────
   const handleAddDevice = (deviceData: ICreateDeviceRequest) => {
-    addDevice(deviceData);
+    const newDevice = addDevice(deviceData);
+    // Set as template and open stock modal
+    setTemplateDevice(newDevice);
     setShowDeviceModal(false);
-    setSelectedDevice(null);
+    setShowAddStockModal(true);
+  };
+
+  // ── Handle Add Stock Units (from IMEI scans)
+  const handleAddStock = (scannedIMEIs: ScannedIMEI[]) => {
+    if (!templateDevice) return;
+
+    // Create a device for each scanned IMEI
+    scannedIMEIs.forEach((scan) => {
+      const deviceData: ICreateDeviceRequest = {
+        brand: templateDevice.brand,
+        model: templateDevice.model,
+        variant: templateDevice.variant,
+        color: templateDevice.color,
+        countryVersion: templateDevice.countryVersion,
+        imei1: scan.imei,
+        imei2: templateDevice.imei2,
+        serialNumber: templateDevice.serialNumber,
+        condition: templateDevice.condition,
+        batteryHealth: templateDevice.batteryHealth,
+        screenCondition: templateDevice.screenCondition,
+        cameraCondition: templateDevice.cameraCondition,
+        speakerCondition: templateDevice.speakerCondition,
+        chargingCondition: templateDevice.chargingCondition,
+        ptaStatus: templateDevice.ptaStatus,
+        purchasePrice: templateDevice.purchasePrice,
+        sellingPrice: templateDevice.sellingPrice,
+        quantity: 1,
+        stockStatus: templateDevice.stockStatus,
+        shelfLocation: templateDevice.shelfLocation,
+        notes: templateDevice.notes,
+        accessories: templateDevice.accessories,
+        images: templateDevice.images,
+      };
+      addDevice(deviceData);
+    });
+
+    // Reset and close modal
+    setShowAddStockModal(false);
+    setTemplateDevice(null);
   };
 
   // ── Handle Delete Device ───────────────
@@ -47,8 +90,9 @@ export function InventoryDashboard() {
 
   // ── Handle Edit Device ─────────────────
   const handleEditDevice = (device: IDevice) => {
-    setSelectedDevice(device);
-    setShowDeviceModal(true);
+    // For now, we can't edit existing devices with the current modal
+    // The modal is designed for creating templates and adding stock units
+    console.log("Edit device:", device);
   };
 
   // ── Profit Trend ───────────────────────
@@ -79,17 +123,28 @@ export function InventoryDashboard() {
                       {stats.totalDevices} devices in stock
                     </p>
                   </div>
-                  <Button
-                    variant="primary"
-                    size="md"
-                    iconLeft={<Plus size={16} />}
-                    onClick={() => {
-                      setSelectedDevice(null);
-                      setShowDeviceModal(true);
-                    }}
-                  >
-                    Add Device
-                  </Button>
+                  <div className="flex gap-2">
+                    {templateDevice && (
+                      <Button
+                        variant="secondary"
+                        size="md"
+                        iconLeft={<ScanBarcode size={16} />}
+                        onClick={() => setShowAddStockModal(true)}
+                      >
+                        Add Stock Units
+                      </Button>
+                    )}
+                    <Button
+                      variant="primary"
+                      size="md"
+                      iconLeft={<Plus size={16} />}
+                      onClick={() => {
+                        setShowDeviceModal(true);
+                      }}
+                    >
+                      Add Device Template
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Statistics Cards */}
@@ -223,7 +278,7 @@ export function InventoryDashboard() {
                     filters={filters}
                     onFilterChange={setFilters}
                     onPageChange={(page) =>
-                      setPagination({ ...pagination, page })
+                      setPagination({ ...pagination, page: Number(page) })
                     }
                     onEdit={handleEditDevice}
                     onDelete={handleDeleteDevice}
@@ -246,6 +301,14 @@ export function InventoryDashboard() {
             setSelectedDevice(null);
           }}
           onSave={handleAddDevice}
+        />
+
+        {/* Add Stock Modal */}
+        <AddStockModal
+          open={showAddStockModal}
+          onClose={() => setShowAddStockModal(false)}
+          onSaveIMEIs={handleAddStock}
+          templateDevice={templateDevice}
         />
 
         {/* Device Viewing Modal */}

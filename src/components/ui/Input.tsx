@@ -8,7 +8,7 @@
 //   <Textarea label="Description" rows={4} />
 // ─────────────────────────────────────────────
 
-import { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes, ReactNode } from "react";
+import type { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes, ReactNode } from "react";
 
 // ── Shared wrapper ───────────────────────────
 

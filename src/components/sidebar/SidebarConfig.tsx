@@ -17,14 +17,10 @@ import {
   ShoppingBag,
   Users,
   Wrench,
-  ScanBarcode,
   BarChart3,
   Settings,
   Package,
-  Tag,
-  MessageSquare,
   UserCog,
-  Store,
 } from "lucide-react";
 import type { NavItem } from "./Sidebar";
 
@@ -44,12 +40,6 @@ export const SidebarConfig: Record<BMZRole, NavItem[]> = {
       label: "Dashboard",
       icon:  LayoutDashboard,
       href:  "/admin/dashboard",
-    },
-    {
-      key:   "imei",
-      label: "IMEI Scanner",
-      icon:  ScanBarcode,
-      href:  "/admin/imei-scanner",
     },
     {
       key:   "phones",
@@ -105,8 +95,8 @@ export const SidebarConfig: Record<BMZRole, NavItem[]> = {
     },
   ],
 
-  // ─── Manager — no staff management ──────────
-  manager: [
+  // ─── Regular User ──────────────────────────
+  USER: [
     {
       key:   "dashboard",
       label: "Dashboard",
@@ -147,53 +137,11 @@ export const SidebarConfig: Record<BMZRole, NavItem[]> = {
       badge: 0,
     },
     {
-      key:   "imei",
-      label: "IMEI Scanner",
-      icon:  ScanBarcode,
-      href:  "/admin/imei-scanner",
-    },
-    {
       key:          "reports",
       label:        "Reports",
       icon:         BarChart3,
       href:         "/admin/reports",
       dividerAbove: true,
-    },
-  ],
-
-  // ─── Staff — day-to-day operations only ──────
-  staff: [
-    {
-      key:   "dashboard",
-      label: "Dashboard",
-      icon:  LayoutDashboard,
-      href:  "/admin/dashboard",
-    },
-    {
-      key:   "phones",
-      label: "Phones",
-      icon:  Smartphone,
-      href:  "/admin/phones",
-    },
-    {
-      key:   "orders",
-      label: "Orders",
-      icon:  ShoppingBag,
-      href:  "/admin/orders",
-      badge: 0,
-    },
-    {
-      key:   "repairs",
-      label: "Repairs",
-      icon:  Wrench,
-      href:  "/admin/repairs",
-      badge: 0,
-    },
-    {
-      key:   "imei",
-      label: "IMEI Scanner",
-      icon:  ScanBarcode,
-      href:  "/admin/imei-scanner",
     },
   ],
 };

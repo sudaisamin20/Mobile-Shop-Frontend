@@ -5,7 +5,6 @@ import { useState, useCallback, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { SidebarConfig } from "./SidebarConfig";
-import type { BMZRole } from "./SidebarConfig";
 import { PageBackground, Avatar } from "../ui";
 import { Bell, Search, Menu, X } from "lucide-react";
 import { useAppSelector } from "../../app/index";
@@ -13,24 +12,30 @@ import { useAppSelector } from "../../app/index";
 const SidebarContentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const user = useAppSelector((state) => state.auth.user);
+  // const user = useAppSelector((state) => state.auth.user);\
+  const user = {
+    fullName: "John Doe",
+    role: "ADMIN",
+  }
   console.log("🔍 SidebarContentPage - User:", user);
+
+  
 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   // Controls whether the drawer is mounted (for exit animation)
   const [mobileVisible, setMobileVisible] = useState(false);
 
-  const navItems = SidebarConfig[user?.role ?? SidebarConfig.USER];
+  const navItems = SidebarConfig[(user?.role as keyof typeof SidebarConfig) ?? "USER"];
 
   const getActiveKey = useCallback(() => {
     const match = navItems?.find(
-      (item: { href: string }) => item.href && location.pathname.startsWith(item.href),
+      (item: any) => item.href && location.pathname.startsWith(item.href),
     );
     return match?.key ?? navItems?.[0]?.key ?? "dashboard";
   }, [location.pathname, navItems]);
 
-  const [activeKey, setActiveKey] = useState(getActiveKey);
+  const [activeKey, setActiveKey] = useState(getActiveKey());
 
   useEffect(() => {
     setActiveKey(getActiveKey());
@@ -79,7 +84,7 @@ const SidebarContentPage = () => {
             onNav={handleNav}
             collapsed={collapsed}
             onToggleCollapse={() => setCollapsed((c) => !c)}
-            user={{ name: user?.fullName, role: user?.role }}
+            user={{ name: user?.fullName || "User", role: user?.role || "USER" }}
             onLogout={handleLogout}
           />
         </div>
@@ -110,7 +115,7 @@ const SidebarContentPage = () => {
                 navItems={navItems}
                 activeKey={activeKey}
                 onNav={handleNav}
-                user={{ name: user?.fullName, role: user?.role }}
+                user={{ name: user?.fullName || "User", role: user?.role || "USER" }}
                 onLogout={handleLogout}
               />
 
